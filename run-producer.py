@@ -476,20 +476,20 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 slr, slh = tcoords[slope_crs]
                 slope = slope_interpolate(slr, slh)
 
-                if gw_min_crs not in tcoords:
-                    tcoords[gw_min_crs] = soil_crs_to_x_transformers[gw_min_crs].transform(sr, sh)
-                gw_min_r, gw_min_h = tcoords[gw_min_crs]
-                min_groundwater_depth = gw_min_interpolate(gw_min_r, gw_min_h)
+                # if gw_min_crs not in tcoords:
+                #     tcoords[gw_min_crs] = soil_crs_to_x_transformers[gw_min_crs].transform(sr, sh)
+                # gw_min_r, gw_min_h = tcoords[gw_min_crs]
+                # min_groundwater_depth = gw_min_interpolate(gw_min_r, gw_min_h)
 
-                if gw_max_crs not in tcoords:
-                    tcoords[gw_max_crs] = soil_crs_to_x_transformers[gw_max_crs].transform(sr, sh)
-                gw_max_r, gw_max_h = tcoords[gw_max_crs]
-                max_groundwater_depth = gw_max_interpolate(gw_max_r, gw_max_h)
+                # if gw_max_crs not in tcoords:
+                #     tcoords[gw_max_crs] = soil_crs_to_x_transformers[gw_max_crs].transform(sr, sh)
+                # gw_max_r, gw_max_h = tcoords[gw_max_crs]
+                # max_groundwater_depth = gw_max_interpolate(gw_max_r, gw_max_h)
 
-                if gw_mean_crs not in tcoords:
-                    tcoords[gw_mean_crs] = soil_crs_to_x_transformers[gw_mean_crs].transform(sr, sh)
-                gw_mean_r, gw_mean_h = tcoords[gw_mean_crs]
-                mean_groundwater_depth = gw_mean_interpolate(gw_mean_r, gw_mean_h)
+                # if gw_mean_crs not in tcoords:
+                #     tcoords[gw_mean_crs] = soil_crs_to_x_transformers[gw_mean_crs].transform(sr, sh)
+                # gw_mean_r, gw_mean_h = tcoords[gw_mean_crs]
+                # mean_groundwater_depth = gw_mean_interpolate(gw_mean_r, gw_mean_h)
 
                 # if irrigation_crs not in tcoords:
                 #     tcoords[irrigation_crs] = soil_crs_to_x_transformers[irrigation_crs].transform(sr, sh)
@@ -518,34 +518,34 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 #     env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
                 #         groundwaterlevel + 0.2, "m"]
 
-                if setup["groundwater-level"] == "MINMAX":
-                    # Assign min and max groundwater depths to the environment template
-                    env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
-                    env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
-                        min_groundwater_depth / 100, "m"]
-                    env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
-                        max_groundwater_depth / 100, "m"]
-                # elif setup["groundwater-level"] == "MEAN":
-                #     # Assign mean groundwater depth to the environment template
+                # if setup["groundwater-level"] == "MINMAX":
+                #     # Assign min and max groundwater depths to the environment template
                 #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
                 #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
-                #         mean_groundwater_depth / 100, "m"]
+                #         min_groundwater_depth / 100, "m"]
                 #     env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
-                #         mean_groundwater_depth / 100, "m"]
-                elif setup["groundwater-level"] == "MIN":
-                    # Assign min and max groundwater depths to the environment template
-                    env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
-                    env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
-                        min_groundwater_depth / 100, "m"]
-                    env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
-                        min_groundwater_depth / 100, "m"]
-                elif setup["groundwater-level"] == "MAX":
-                    # Assign min and max groundwater depths to the environment template
-                    env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
-                    env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
-                        max_groundwater_depth / 100, "m"]
-                    env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
-                        max_groundwater_depth / 100, "m"]
+                #         max_groundwater_depth / 100, "m"]
+                # # elif setup["groundwater-level"] == "MEAN":
+                # #     # Assign mean groundwater depth to the environment template
+                # #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
+                # #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
+                # #         mean_groundwater_depth / 100, "m"]
+                # #     env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
+                # #         mean_groundwater_depth / 100, "m"]
+                # elif setup["groundwater-level"] == "MIN":
+                #     # Assign min and max groundwater depths to the environment template
+                #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
+                #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
+                #         min_groundwater_depth / 100, "m"]
+                #     env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
+                #         min_groundwater_depth / 100, "m"]
+                # elif setup["groundwater-level"] == "MAX":
+                #     # Assign min and max groundwater depths to the environment template
+                #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
+                #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
+                #         max_groundwater_depth / 100, "m"]
+                #     env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
+                #         max_groundwater_depth / 100, "m"]
 
                 # setting impenetrable layer
                 if setup["impenetrable-layer"]:
