@@ -59,7 +59,7 @@ PATHS = {
         "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
         "path-debug-write-folder": "./debug-out/",
     },
-    
+
     "mbm-local-remote": {
         # "include-file-base-path": "/home/berg/GitHub/monica-parameters/", # path to monica-parameters
         "path-to-climate-dir": "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/common/data/climate/",
@@ -95,19 +95,7 @@ DATA_GRID_SLOPE = "germany/slope_1000_25832_etrs89-utm32n.asc"
 DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 DATA_GRID_SOIL = "germany/buek200_1000_25832_etrs89-utm32n.asc"
 DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
-#DATA_GRID_CROPS = "germany/permanent-grass-mask-BB_1000_25832_etrs89-utm32n.asc"  #nodata was 0 in the file assigned below no data realigned to be -9999
-DATA_GRID_CROPS = "germany/permanent-grass-mask-BB_1000_25832_etrs89-utm32n-realigned.asc" #nodata = -9999
-#DATA_GRID_CROPS = "germany/OWgermany-crop-ww_1000_25832_etrs89-utm32n.asc"  # Added as a cropmap for winter wheat OW
-# ORIGINAL DATA_GRID_SOIL = "germany/buek200_1000_25832_etrs89-utm32n.asc"
-# DATA_GRID_CROPS = "germany/crops-all2017-2019_1000_25832_etrs89-utm32n.asc"
-# DATA_GRID_CROPS = "germany/dwd-stations-pheno_1000_25832_etrs89-utm32n.asc"
-# DATA_GRID_CROPS = "germany/germany-complete_1000_25832_etrs89-utm32n.asc"
-# DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_wc_18.asc"
-# DATA_GRID_GW_MIN = "germany/gwl-min_1000_25832_etrs89-utm32.asc"  # min groundwater level map
-# DATA_GRID_GW_MAX = "germany/gwl-max_1000_25832_etrs89-utm32.asc"  # max groundwater level map
-# DATA_GRID_GW_MEAN = "germany/gwl-mean_1000_25832_etrs89-utm32.asc"  # mean groundwater level map
-# TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
-# TEMPLATE_PATH_LATLON = "data/latlon-to-rowcol.json"
+DATA_GRID_CROPS = "germany/WW_cropmap_BB.asc" #nodata = -9999
 TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv"
 
 # Additional data for masking the regions
@@ -140,9 +128,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "start-row": "0",
         "end-row": "-1",
         "path_to_dem_grid": "",
-        "sim.json": "sim.json",
-        "crop.json": "crop.json",
-        "site.json": "site.json",
+        "sim.json": "sim_WL.json",
+        "crop.json": "crop_WL.json",
+        "site.json": "site_WL.json",
         "setups-file": "sim_setups_SG.csv",
         "run-setups": "[1]",
         "shared_id": shared_id
@@ -244,50 +232,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
     crop_interpolate = Mrunlib.create_ascii_grid_interpolator(crop_grid, crop_meta)
     print("read: ", path_to_crop_grid)
-
-    # # irrigation data
-    # path_to_irrigation_grid = paths["path-to-data-dir"] + DATA_GRID_IRRIGATION
-    # irrigation_epsg_code = int(path_to_irrigation_grid.split("/")[-1].split("_")[2])
-    # irrigation_crs = CRS.from_epsg(irrigation_epsg_code)
-    # if irrigation_crs not in soil_crs_to_x_transformers:
-    #     soil_crs_to_x_transformers[irrigation_crs] = Transformer.from_crs(soil_crs, irrigation_crs)
-    # irrigation_metadata, _ = Mrunlib.read_header(path_to_irrigation_grid)
-    # irrigation_grid = np.loadtxt(path_to_irrigation_grid, dtype=int, skiprows=6)
-    # irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata, False)
-    # print("read: ", path_to_irrigation_grid)
-
-    # # min groundwater level data
-    # path_to_gw_min_grid = paths["path-to-data-dir"] + DATA_GRID_GW_MIN
-    # gw_min_epsg_code = int(path_to_gw_min_grid.split("/")[-1].split("_")[2])
-    # gw_min_crs = CRS.from_epsg(gw_min_epsg_code)
-    # if gw_min_crs not in soil_crs_to_x_transformers:
-    #     soil_crs_to_x_transformers[gw_min_crs] = Transformer.from_crs(soil_crs, gw_min_crs)
-    # gw_min_metadata, _ = Mrunlib.read_header(path_to_gw_min_grid)
-    # gw_min_grid = np.loadtxt(path_to_gw_min_grid, dtype=float, skiprows=6)
-    # gw_min_interpolate = Mrunlib.create_ascii_grid_interpolator(gw_min_grid, gw_min_metadata)
-    # print("read: ", path_to_gw_min_grid)
-
-    # # max groundwater level data
-    # path_to_gw_max_grid = paths["path-to-data-dir"] + DATA_GRID_GW_MAX
-    # gw_max_epsg_code = int(path_to_gw_max_grid.split("/")[-1].split("_")[2])
-    # gw_max_crs = CRS.from_epsg(gw_max_epsg_code)
-    # if gw_max_crs not in soil_crs_to_x_transformers:
-    #     soil_crs_to_x_transformers[gw_max_crs] = Transformer.from_crs(soil_crs, gw_max_crs)
-    # gw_max_metadata, _ = Mrunlib.read_header(path_to_gw_max_grid)
-    # gw_max_grid = np.loadtxt(path_to_gw_max_grid, dtype=float, skiprows=6)
-    # gw_max_interpolate = Mrunlib.create_ascii_grid_interpolator(gw_max_grid, gw_max_metadata)
-    # print("read: ", path_to_gw_max_grid)
-
-    # # mean groundwater level data
-    # path_to_gw_mean_grid = paths["path-to-data-dir"] + DATA_GRID_GW_MEAN
-    # gw_mean_epsg_code = int(path_to_gw_mean_grid.split("/")[-1].split("_")[2])
-    # gw_mean_crs = CRS.from_epsg(gw_mean_epsg_code)
-    # if gw_mean_crs not in soil_crs_to_x_transformers:
-    #     soil_crs_to_x_transformers[gw_mean_crs] = Transformer.from_crs(soil_crs, gw_mean_crs)
-    # gw_mean_metadata, _ = Mrunlib.read_header(path_to_gw_mean_grid)
-    # gw_mean_grid = np.loadtxt(path_to_gw_mean_grid, dtype=float, skiprows=6)
-    # gw_mean_interpolate = Mrunlib.create_ascii_grid_interpolator(gw_mean_grid, gw_mean_metadata)
-    # print("read: ", path_to_gw_mean_grid)
 
     # Create the function for the mask. This function will later use the additional column in a setup file!
 
@@ -477,25 +421,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 slr, slh = tcoords[slope_crs]
                 slope = slope_interpolate(slr, slh)
 
-                # if gw_min_crs not in tcoords:
-                #     tcoords[gw_min_crs] = soil_crs_to_x_transformers[gw_min_crs].transform(sr, sh)
-                # gw_min_r, gw_min_h = tcoords[gw_min_crs]
-                # min_groundwater_depth = gw_min_interpolate(gw_min_r, gw_min_h)
-
-                # if gw_max_crs not in tcoords:
-                #     tcoords[gw_max_crs] = soil_crs_to_x_transformers[gw_max_crs].transform(sr, sh)
-                # gw_max_r, gw_max_h = tcoords[gw_max_crs]
-                # max_groundwater_depth = gw_max_interpolate(gw_max_r, gw_max_h)
-
-                # if gw_mean_crs not in tcoords:
-                #     tcoords[gw_mean_crs] = soil_crs_to_x_transformers[gw_mean_crs].transform(sr, sh)
-                # gw_mean_r, gw_mean_h = tcoords[gw_mean_crs]
-                # mean_groundwater_depth = gw_mean_interpolate(gw_mean_r, gw_mean_h)
-
-                # if irrigation_crs not in tcoords:
-                #     tcoords[irrigation_crs] = soil_crs_to_x_transformers[irrigation_crs].transform(sr, sh)
-                # irr_r, irr_h = tcoords[irrigation_crs]
-                # irrigation = int(irrigation_interpolate(irr_r, irr_h))
+                
 
                 env_template["params"]["userCropParameters"]["__enable_T_response_leaf_expansion__"] = setup[
                     "LeafExtensionModifier"]
@@ -503,50 +429,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 # print("soil:", soil_profile)
                 env_template["params"]["siteParameters"]["SoilProfileParameters"] = soil_profile
 
-                # setting groundwater level
-                # if setup["groundwater-level"]:
-                #     groundwaterlevel = 20
-                #     layer_depth = 0
-                #     for layer in soil_profile:
-                #         if layer.get("is_in_groundwater", False):
-                #             groundwaterlevel = layer_depth
-                #             # print("setting groundwaterlevel of soil_id:", str(soil_id), "to", groundwaterlevel, "m")
-                #             break
-                #         layer_depth += Mrunlib.get_value(layer["Thickness"])
-                #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
-                #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
-                #         max(0, groundwaterlevel - 0.2), "m"]
-                #     env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
-                #         groundwaterlevel + 0.2, "m"]
-
-                # if setup["groundwater-level"] == "MINMAX":
-                #     # Assign min and max groundwater depths to the environment template
-                #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
-                #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
-                #         min_groundwater_depth / 100, "m"]
-                #     env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
-                #         max_groundwater_depth / 100, "m"]
-                # # elif setup["groundwater-level"] == "MEAN":
-                # #     # Assign mean groundwater depth to the environment template
-                # #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
-                # #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
-                # #         mean_groundwater_depth / 100, "m"]
-                # #     env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
-                # #         mean_groundwater_depth / 100, "m"]
-                # elif setup["groundwater-level"] == "MIN":
-                #     # Assign min and max groundwater depths to the environment template
-                #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
-                #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
-                #         min_groundwater_depth / 100, "m"]
-                #     env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
-                #         min_groundwater_depth / 100, "m"]
-                # elif setup["groundwater-level"] == "MAX":
-                #     # Assign min and max groundwater depths to the environment template
-                #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
-                #     env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
-                #         max_groundwater_depth / 100, "m"]
-                #     env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
-                #         max_groundwater_depth / 100, "m"]
 
                 # setting impenetrable layer
                 if setup["impenetrable-layer"]:
