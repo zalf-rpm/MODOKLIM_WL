@@ -34,9 +34,9 @@ import rasterio
 from rasterio.transform import from_origin
 from rasterio import features
 
-import monica_io3
-import soil_io3
-import monica_run_lib as Mrunlib
+from zalfmas_common.model import monica_io
+from zalfmas_common.soil import soil_io
+from zalfmas_common import rect_ascii_grid_management as ragm
 
 PATHS = {
     # adjust the local path to your environment
@@ -196,7 +196,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     soil_crs = CRS.from_epsg(soil_epsg_code)
     if wgs84_crs not in soil_crs_to_x_transformers:
         soil_crs_to_x_transformers[wgs84_crs] = Transformer.from_crs(soil_crs, wgs84_crs)
-    soil_metadata, _ = Mrunlib.read_header(path_to_soil_grid)
+    soil_metadata, _ = ragm.read_header(path_to_soil_grid)
     soil_grid = np.loadtxt(path_to_soil_grid, dtype=int, skiprows=6)
     print("read: ", path_to_soil_grid)
 
@@ -206,9 +206,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     dem_crs = CRS.from_epsg(dem_epsg_code)
     if dem_crs not in soil_crs_to_x_transformers:
         soil_crs_to_x_transformers[dem_crs] = Transformer.from_crs(soil_crs, dem_crs)
-    dem_metadata, _ = Mrunlib.read_header(path_to_dem_grid)
+    dem_metadata, _ = ragm.read_header(path_to_dem_grid)
     dem_grid = np.loadtxt(path_to_dem_grid, dtype=float, skiprows=6)
-    dem_interpolate = Mrunlib.create_ascii_grid_interpolator(dem_grid, dem_metadata)
+    dem_interpolate = ragm.create_interpolator_from_rect_grid(dem_grid, dem_metadata)
     print("read: ", path_to_dem_grid)
 
     # slope data
@@ -217,9 +217,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     slope_crs = CRS.from_epsg(slope_epsg_code)
     if slope_crs not in soil_crs_to_x_transformers:
         soil_crs_to_x_transformers[slope_crs] = Transformer.from_crs(soil_crs, slope_crs)
-    slope_metadata, _ = Mrunlib.read_header(path_to_slope_grid)
+    slope_metadata, _ = ragm.read_header(path_to_slope_grid)
     slope_grid = np.loadtxt(path_to_slope_grid, dtype=float, skiprows=6)
-    slope_interpolate = Mrunlib.create_ascii_grid_interpolator(slope_grid, slope_metadata)
+    slope_interpolate = ragm.create_interpolator_from_rect_grid(slope_grid, slope_metadata)
     print("read: ", path_to_slope_grid)
 
     # land use data
@@ -228,9 +228,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     landuse_crs = CRS.from_epsg(landuse_epsg_code)
     if landuse_crs not in soil_crs_to_x_transformers:
         soil_crs_to_x_transformers[landuse_crs] = Transformer.from_crs(soil_crs, landuse_crs)
-    landuse_meta, _ = Mrunlib.read_header(path_to_landuse_grid)
+    landuse_meta, _ = ragm.read_header(path_to_landuse_grid)
     landuse_grid = np.loadtxt(path_to_landuse_grid, dtype=int, skiprows=6)
-    landuse_interpolate = Mrunlib.create_ascii_grid_interpolator(landuse_grid, landuse_meta)
+    landuse_interpolate = ragm.create_interpolator_from_rect_grid(landuse_grid, landuse_meta)
     print("read: ", path_to_landuse_grid)
 
     # crop mask data
@@ -239,9 +239,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     crop_crs = CRS.from_epsg(crop_epsg_code)
     if crop_crs not in soil_crs_to_x_transformers:
         soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
-    crop_meta, _ = Mrunlib.read_header(path_to_crop_grid)
+    crop_meta, _ = ragm.read_header(path_to_crop_grid)
     crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
-    crop_interpolate = Mrunlib.create_ascii_grid_interpolator(crop_grid, crop_meta)
+    crop_interpolate = ragm.create_interpolator_from_rect_grid(crop_grid, crop_meta)
     print("read: ", path_to_crop_grid)
 
     # # irrigation data
@@ -250,9 +250,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     # irrigation_crs = CRS.from_epsg(irrigation_epsg_code)
     # if irrigation_crs not in soil_crs_to_x_transformers:
     #     soil_crs_to_x_transformers[irrigation_crs] = Transformer.from_crs(soil_crs, irrigation_crs)
-    # irrigation_metadata, _ = Mrunlib.read_header(path_to_irrigation_grid)
+    # irrigation_metadata, _ = ragm.read_header(path_to_irrigation_grid)
     # irrigation_grid = np.loadtxt(path_to_irrigation_grid, dtype=int, skiprows=6)
-    # irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata, False)
+    # irrigation_interpolate = ragm.create_interpolator_from_rect_grid(irrigation_grid, irrigation_metadata, False)
     # print("read: ", path_to_irrigation_grid)
 
     # # min groundwater level data
@@ -261,9 +261,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     # gw_min_crs = CRS.from_epsg(gw_min_epsg_code)
     # if gw_min_crs not in soil_crs_to_x_transformers:
     #     soil_crs_to_x_transformers[gw_min_crs] = Transformer.from_crs(soil_crs, gw_min_crs)
-    # gw_min_metadata, _ = Mrunlib.read_header(path_to_gw_min_grid)
+    # gw_min_metadata, _ = ragm.read_header(path_to_gw_min_grid)
     # gw_min_grid = np.loadtxt(path_to_gw_min_grid, dtype=float, skiprows=6)
-    # gw_min_interpolate = Mrunlib.create_ascii_grid_interpolator(gw_min_grid, gw_min_metadata)
+    # gw_min_interpolate = ragm.create_interpolator_from_rect_grid(gw_min_grid, gw_min_metadata)
     # print("read: ", path_to_gw_min_grid)
 
     # # max groundwater level data
@@ -272,9 +272,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     # gw_max_crs = CRS.from_epsg(gw_max_epsg_code)
     # if gw_max_crs not in soil_crs_to_x_transformers:
     #     soil_crs_to_x_transformers[gw_max_crs] = Transformer.from_crs(soil_crs, gw_max_crs)
-    # gw_max_metadata, _ = Mrunlib.read_header(path_to_gw_max_grid)
+    # gw_max_metadata, _ = ragm.read_header(path_to_gw_max_grid)
     # gw_max_grid = np.loadtxt(path_to_gw_max_grid, dtype=float, skiprows=6)
-    # gw_max_interpolate = Mrunlib.create_ascii_grid_interpolator(gw_max_grid, gw_max_metadata)
+    # gw_max_interpolate = ragm.create_interpolator_from_rect_grid(gw_max_grid, gw_max_metadata)
     # print("read: ", path_to_gw_max_grid)
 
     # # mean groundwater level data
@@ -283,9 +283,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     # gw_mean_crs = CRS.from_epsg(gw_mean_epsg_code)
     # if gw_mean_crs not in soil_crs_to_x_transformers:
     #     soil_crs_to_x_transformers[gw_mean_crs] = Transformer.from_crs(soil_crs, gw_mean_crs)
-    # gw_mean_metadata, _ = Mrunlib.read_header(path_to_gw_mean_grid)
+    # gw_mean_metadata, _ = ragm.read_header(path_to_gw_mean_grid)
     # gw_mean_grid = np.loadtxt(path_to_gw_mean_grid, dtype=float, skiprows=6)
-    # gw_mean_interpolate = Mrunlib.create_ascii_grid_interpolator(gw_mean_grid, gw_mean_metadata)
+    # gw_mean_interpolate = ragm.create_interpolator_from_rect_grid(gw_mean_grid, gw_mean_metadata)
     # print("read: ", path_to_gw_mean_grid)
 
     # Create the function for the mask. This function will later use the additional column in a setup file!
@@ -344,7 +344,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         # path = TEMPLATE_PATH_LATLON.format(path_to_climate_dir=paths["path-to-climate-dir"] + setup["climate_path_to_latlon_file"] + "/")
         path = TEMPLATE_PATH_LATLON.format(
             path_to_climate_dir=paths["path-to-climate-dir"] + setup["climate_path_to_latlon_file"] + "/")
-        climate_data_interpolator = Mrunlib.create_climate_geoGrid_interpolator_from_json_file(path, wgs84_crs,
+        climate_data_interpolator = ragm.create_climate_geoGrid_interpolator_from_json_file(path, wgs84_crs,
                                                                                                soil_crs, cdict)
         print("created climate_data to gk5 interpolator: ", path)
 
@@ -373,7 +373,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
             "use_vernalisation_fix"] if "use_vernalisation_fix" in setup else False
 
         # create environment template from json templates
-        env_template = monica_io3.create_env_json_from_json_config({
+        env_template = monica_io.create_env_json_from_json_config({
             "crop": crop_json,
             "site": site_json,
             "sim": sim_json,
@@ -439,7 +439,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 if soil_id in soil_id_cache:
                     soil_profile = soil_id_cache[soil_id]
                 else:
-                    soil_profile = soil_io3.soil_parameters(soil_db_con, soil_id)
+                    soil_profile = soil_io.soil_parameters(soil_db_con, soil_id)
                     soil_id_cache[soil_id] = soil_profile
 
                 if len(soil_profile) == 0:
@@ -546,21 +546,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 #         max_groundwater_depth / 100, "m"]
                 #     env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
                 #         max_groundwater_depth / 100, "m"]
-
-                # setting impenetrable layer
-                if setup["impenetrable-layer"]:
-                    impenetrable_layer_depth = Mrunlib.get_value(
-                        env_template["params"]["userEnvironmentParameters"]["LeachingDepth"])
-                    layer_depth = 0
-                    for layer in soil_profile:
-                        if layer.get("is_impenetrable", False):
-                            impenetrable_layer_depth = layer_depth
-                            # print("setting leaching depth of soil_id:", str(soil_id), "to", impenetrable_layer_depth, "m")
-                            break
-                        layer_depth += Mrunlib.get_value(layer["Thickness"])
-                    env_template["params"]["userEnvironmentParameters"]["LeachingDepth"] = [impenetrable_layer_depth,
-                                                                                            "m"]
-                    env_template["params"]["siteParameters"]["ImpenetrableLayerDepth"] = [impenetrable_layer_depth, "m"]
 
                 if setup["elevation"]:
                     env_template["params"]["siteParameters"]["heightNN"] = float(height_nn)

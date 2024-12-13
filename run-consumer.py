@@ -29,9 +29,8 @@ import timeit
 import types
 import zmq
 
-import monica_io3
-import soil_io3
-import monica_run_lib as Mrunlib
+from zalfmas_common.model import monica_io
+from zalfmas_common import rect_ascii_grid_management as ragm
 
 PATHS = {
     "re-local-remote": {
@@ -66,14 +65,8 @@ def create_output(msg):
         for vals in results:
             if "CM-count" in vals:
                 cm_count_to_vals[vals["CM-count"]].update(vals)
-            elif is_daily_section:
+            elif is_daily_section and "Date" in vals:
                 cm_count_to_vals[vals["Date"]].update(vals)
-
-    #cmcs = list(cm_count_to_vals.keys())
-    #cmcs.sort()
-    #last_cmc = cmcs[-1]
-    #if "Year" not in cm_count_to_vals[last_cmc]:
-    #    cm_count_to_vals.pop(last_cmc)
 
     return cm_count_to_vals
 
@@ -234,7 +227,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
     path_to_soil_grid = TEMPLATE_SOIL_PATH.format(local_path_to_data_dir=paths["path-to-data-dir"])
     soil_epsg_code = int(path_to_soil_grid.split("/")[-1].split("_")[2])
     soil_crs = CRS.from_epsg(soil_epsg_code)
-    soil_metadata, header = Mrunlib.read_header(path_to_soil_grid)
+    soil_metadata, header = ragm.read_header(path_to_soil_grid)
     soil_grid_template = np.loadtxt(path_to_soil_grid, dtype=int, skiprows=6)
 
     scols = int(soil_metadata["ncols"])
@@ -249,9 +242,9 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
         landuse_epsg_code = int(path_to_landuse_grid.split("/")[-1].split("_")[2])
         landuse_crs = CRS.from_epsg(landuse_epsg_code)
         landuse_transformer = Transformer.from_crs(soil_crs, landuse_crs)
-        landuse_meta, _ = Mrunlib.read_header(path_to_landuse_grid)
+        landuse_meta, _ = ragm.read_header(path_to_landuse_grid)
         landuse_grid = np.loadtxt(path_to_landuse_grid, dtype=int, skiprows=6)
-        landuse_interpolate = Mrunlib.create_ascii_grid_interpolator(landuse_grid, landuse_meta)
+        landuse_interpolate = ragm.create_interpolator_from_rect_grid(landuse_grid, landuse_meta)
 
         for srow in range(0, srows):
             # print(srow)
@@ -418,13 +411,13 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
 
                     if len(results) > 0:
                         writer.writerow([orig_spec.replace("\"", "")])
-                        for row in monica_io3.write_output_header_rows(output_ids,
+                        for row in monica_io.write_output_header_rows(output_ids,
                                                                        include_header_row=True,
                                                                        include_units_row=True,
                                                                        include_time_agg=False):
                             writer.writerow(row)
 
-                        for row in monica_io3.write_output_obj(output_ids, results):
+                        for row in monica_io.write_output_obj(output_ids, results):
                             writer.writerow(row)
 
                     writer.writerow([])
