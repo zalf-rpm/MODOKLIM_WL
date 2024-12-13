@@ -43,10 +43,10 @@
                 "Crop",
                 "Stage",
 				"TimeUnderAnoxia",
-				"OxRed|OXygenDeficit",
+				"CriticalOxygenContent",
+				"OXygenDeficit",
                 "LAI",
-                "Yield",
-                "AbovegroundBiomass|AbBiom",
+                "AbBiom",
                 "Tra|TRANS",
                 "Act_ET",
                 "RunOff",
@@ -54,7 +54,7 @@
                 ["PercolationRate|DPER", 15],
 				"Infiltration|Infilt",
                 "NLeach|NLEA",
-                ["Mois|SWC", [1, 20]]
+                ["Mois|SMC", [1, 20]]
 			]
 		]
 	},
