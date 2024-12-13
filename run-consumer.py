@@ -88,12 +88,19 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
     make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=np.float))
 
     output_grids = {
-        "SumNUp": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        "TotBiomN": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        "NLeach": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        "Ra": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        "N2O": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        "NH3": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}
+        "TimeUnderAnoxia": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "OxygenDeficit": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "LAI": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "AbBiom": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "TRANS": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "Act_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "RunOff": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "sws": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "DPER": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "Infiltration": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "NLEA": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "SMC": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}
+
     }
     output_keys = list(output_grids.keys())
 
