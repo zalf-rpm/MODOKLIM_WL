@@ -38,7 +38,8 @@
 		"obj-outputs?": true,
 
 		"events": [
-			"Date",
+			"daily", [
+				"Date",
                 "Crop",
                 "Stage",
                 "LAI",
@@ -51,6 +52,7 @@
                 "NLeach|NLEA",
                 ["Mois|SWC", [1, 20]]
 			]
+		]
 	},
 
 	"NumberOfLayers": 20,
