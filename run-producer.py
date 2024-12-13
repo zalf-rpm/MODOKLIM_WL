@@ -102,17 +102,17 @@ DATA_GRID_CROPS = "germany/permanent-grass-mask-BB_1000_25832_etrs89-utm32n-real
 # DATA_GRID_CROPS = "germany/dwd-stations-pheno_1000_25832_etrs89-utm32n.asc"
 # DATA_GRID_CROPS = "germany/germany-complete_1000_25832_etrs89-utm32n.asc"
 # DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_wc_18.asc"
-DATA_GRID_GW_MIN = "germany/gwl-min_1000_25832_etrs89-utm32.asc"  # min groundwater level map
-DATA_GRID_GW_MAX = "germany/gwl-max_1000_25832_etrs89-utm32.asc"  # max groundwater level map
-DATA_GRID_GW_MEAN = "germany/gwl-mean_1000_25832_etrs89-utm32.asc"  # mean groundwater level map
-TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
+# DATA_GRID_GW_MIN = "germany/gwl-min_1000_25832_etrs89-utm32.asc"  # min groundwater level map
+# DATA_GRID_GW_MAX = "germany/gwl-max_1000_25832_etrs89-utm32.asc"  # max groundwater level map
+# DATA_GRID_GW_MEAN = "germany/gwl-mean_1000_25832_etrs89-utm32.asc"  # mean groundwater level map
+# TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
 # TEMPLATE_PATH_LATLON = "data/latlon-to-rowcol.json"
 TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv"
 
 # Additional data for masking the regions
 NUTS1_REGIONS = "data/germany/NUTS250_N1.shp"
 
-TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/ILR_SEED_HARVEST_doys_{crop_id}.csv"
+TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/WW_WL_{crop_id}.csv"
 
 gdf = gpd.read_file(NUTS1_REGIONS)
 
@@ -142,7 +142,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "sim.json": "sim.json",
         "crop.json": "crop.json",
         "site.json": "site.json",
-        "setups-file": "sim_setups_VK.csv",
+        "setups-file": "sim_setups_SG.csv",
         "run-setups": "[1]",
         "shared_id": shared_id
     }
@@ -255,38 +255,38 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     # irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata, False)
     # print("read: ", path_to_irrigation_grid)
 
-    # min groundwater level data
-    path_to_gw_min_grid = paths["path-to-data-dir"] + DATA_GRID_GW_MIN
-    gw_min_epsg_code = int(path_to_gw_min_grid.split("/")[-1].split("_")[2])
-    gw_min_crs = CRS.from_epsg(gw_min_epsg_code)
-    if gw_min_crs not in soil_crs_to_x_transformers:
-        soil_crs_to_x_transformers[gw_min_crs] = Transformer.from_crs(soil_crs, gw_min_crs)
-    gw_min_metadata, _ = Mrunlib.read_header(path_to_gw_min_grid)
-    gw_min_grid = np.loadtxt(path_to_gw_min_grid, dtype=float, skiprows=6)
-    gw_min_interpolate = Mrunlib.create_ascii_grid_interpolator(gw_min_grid, gw_min_metadata)
-    print("read: ", path_to_gw_min_grid)
+    # # min groundwater level data
+    # path_to_gw_min_grid = paths["path-to-data-dir"] + DATA_GRID_GW_MIN
+    # gw_min_epsg_code = int(path_to_gw_min_grid.split("/")[-1].split("_")[2])
+    # gw_min_crs = CRS.from_epsg(gw_min_epsg_code)
+    # if gw_min_crs not in soil_crs_to_x_transformers:
+    #     soil_crs_to_x_transformers[gw_min_crs] = Transformer.from_crs(soil_crs, gw_min_crs)
+    # gw_min_metadata, _ = Mrunlib.read_header(path_to_gw_min_grid)
+    # gw_min_grid = np.loadtxt(path_to_gw_min_grid, dtype=float, skiprows=6)
+    # gw_min_interpolate = Mrunlib.create_ascii_grid_interpolator(gw_min_grid, gw_min_metadata)
+    # print("read: ", path_to_gw_min_grid)
 
-    # max groundwater level data
-    path_to_gw_max_grid = paths["path-to-data-dir"] + DATA_GRID_GW_MAX
-    gw_max_epsg_code = int(path_to_gw_max_grid.split("/")[-1].split("_")[2])
-    gw_max_crs = CRS.from_epsg(gw_max_epsg_code)
-    if gw_max_crs not in soil_crs_to_x_transformers:
-        soil_crs_to_x_transformers[gw_max_crs] = Transformer.from_crs(soil_crs, gw_max_crs)
-    gw_max_metadata, _ = Mrunlib.read_header(path_to_gw_max_grid)
-    gw_max_grid = np.loadtxt(path_to_gw_max_grid, dtype=float, skiprows=6)
-    gw_max_interpolate = Mrunlib.create_ascii_grid_interpolator(gw_max_grid, gw_max_metadata)
-    print("read: ", path_to_gw_max_grid)
+    # # max groundwater level data
+    # path_to_gw_max_grid = paths["path-to-data-dir"] + DATA_GRID_GW_MAX
+    # gw_max_epsg_code = int(path_to_gw_max_grid.split("/")[-1].split("_")[2])
+    # gw_max_crs = CRS.from_epsg(gw_max_epsg_code)
+    # if gw_max_crs not in soil_crs_to_x_transformers:
+    #     soil_crs_to_x_transformers[gw_max_crs] = Transformer.from_crs(soil_crs, gw_max_crs)
+    # gw_max_metadata, _ = Mrunlib.read_header(path_to_gw_max_grid)
+    # gw_max_grid = np.loadtxt(path_to_gw_max_grid, dtype=float, skiprows=6)
+    # gw_max_interpolate = Mrunlib.create_ascii_grid_interpolator(gw_max_grid, gw_max_metadata)
+    # print("read: ", path_to_gw_max_grid)
 
-    # mean groundwater level data
-    path_to_gw_mean_grid = paths["path-to-data-dir"] + DATA_GRID_GW_MEAN
-    gw_mean_epsg_code = int(path_to_gw_mean_grid.split("/")[-1].split("_")[2])
-    gw_mean_crs = CRS.from_epsg(gw_mean_epsg_code)
-    if gw_mean_crs not in soil_crs_to_x_transformers:
-        soil_crs_to_x_transformers[gw_mean_crs] = Transformer.from_crs(soil_crs, gw_mean_crs)
-    gw_mean_metadata, _ = Mrunlib.read_header(path_to_gw_mean_grid)
-    gw_mean_grid = np.loadtxt(path_to_gw_mean_grid, dtype=float, skiprows=6)
-    gw_mean_interpolate = Mrunlib.create_ascii_grid_interpolator(gw_mean_grid, gw_mean_metadata)
-    print("read: ", path_to_gw_mean_grid)
+    # # mean groundwater level data
+    # path_to_gw_mean_grid = paths["path-to-data-dir"] + DATA_GRID_GW_MEAN
+    # gw_mean_epsg_code = int(path_to_gw_mean_grid.split("/")[-1].split("_")[2])
+    # gw_mean_crs = CRS.from_epsg(gw_mean_epsg_code)
+    # if gw_mean_crs not in soil_crs_to_x_transformers:
+    #     soil_crs_to_x_transformers[gw_mean_crs] = Transformer.from_crs(soil_crs, gw_mean_crs)
+    # gw_mean_metadata, _ = Mrunlib.read_header(path_to_gw_mean_grid)
+    # gw_mean_grid = np.loadtxt(path_to_gw_mean_grid, dtype=float, skiprows=6)
+    # gw_mean_interpolate = Mrunlib.create_ascii_grid_interpolator(gw_mean_grid, gw_mean_metadata)
+    # print("read: ", path_to_gw_mean_grid)
 
     # Create the function for the mask. This function will later use the additional column in a setup file!
 
