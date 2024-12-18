@@ -25,6 +25,7 @@ import numpy as np
 import os
 from pyproj import CRS, Transformer
 import sqlite3
+import shutil
 import sys
 import timeit
 import types
@@ -38,11 +39,13 @@ PATHS = {
     "mbm-local-remote": {
         "path-to-data-dir": "data/",
         "path-to-output-dir": "out/",
+        "path-to-beegfs-output-dir": "beegfs-out/",
         "path-to-csv-output-dir": "csv-out/"
     },
     "remoteConsumer-remoteMonica": {
         "path-to-data-dir": "./data/",
-        "path-to-output-dir": "/out/out/",
+        "path-to-output-dir": "/scratch/modoklim_wl/out/",
+        "path-to-beegfs-output-dir": "/out/out/",
         "path-to-csv-output-dir": "/out/csv-out/"
     }
 }
@@ -88,16 +91,16 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         "TimeUnderAnoxia": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
         "OxygenDeficit": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
         "LAI": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        #"AbBiom": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        #"TRANS": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        #"Act_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        #"RunOff": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        #"sws": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        #"DPER_1": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        #"Infiltration": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        #"NLEA": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
+        "AbBiom": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
+        "TRANS": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
+        "Act_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
+        "RunOff": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
+        "sws": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
+        "DPER_1": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
+        "Infiltration": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
+        "NLEA": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
     }
-    for i in range(1, 3+1):
+    for i in range(1, 8+1):
         output_grids[f"SMC_{i}"] = {"data": make_dict_nparr(), "cast-to": "float", "digits": 3}
     output_keys = list(output_grids.keys())
 
@@ -217,6 +220,8 @@ def run_consumer(leave_after_finished_run=True, server=None, port=None):
 
     if not "out" in config:
         config["out"] = paths["path-to-output-dir"]
+    if not "out-beegfs" in config:
+        config["out-beegfs"] = paths["path-to-beegfs-output-dir"]
     if not "csv-out" in config:
         config["csv-out"] = paths["path-to-csv-output-dir"]
 
@@ -455,10 +460,13 @@ def run_consumer(leave_after_finished_run=True, server=None, port=None):
             # print("time to process message" + str(elapsed))
         except zmq.error.Again as _e:
             print('no response from the server (with "timeout"=%d ms) ' % socket.RCVTIMEO)
-            return
+            break
         except Exception as e:
             print("Exception:", e)
             # continue
+
+    shutil.copytree(config["out"], config["beegfs-out"])
+    shutil.rmtree(config["out"])
 
     print("exiting run_consumer()")
     # debug_file.close()
