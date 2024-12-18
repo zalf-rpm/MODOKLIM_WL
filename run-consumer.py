@@ -44,8 +44,9 @@ PATHS = {
     },
     "remoteConsumer-remoteMonica": {
         "path-to-data-dir": "./data/",
-        "path-to-output-dir": "/project/modoklim_wl/out/",
-        "path-to-beegfs-output-dir": "/out/out/",
+        #"path-to-output-dir": "/project/modoklim_wl/out/",
+        "path-to-output-dir": "/out/out/",
+        #"path-to-beegfs-output-dir": "/out/out/",
         "path-to-csv-output-dir": "/out/csv-out/"
     }
 }
@@ -466,8 +467,8 @@ def run_consumer(leave_after_finished_run=True, server=None, port=None):
             print("Exception:", e)
             # continue
 
-    shutil.copytree(config["out"], config["beegfs-out"])
-    shutil.rmtree(config["out"])
+    #shutil.copytree(config["out"], config["beegfs-out"])
+    #shutil.rmtree(config["out"])
 
     print("exiting run_consumer()")
     # debug_file.close()
