@@ -222,8 +222,8 @@ def run_consumer(leave_after_finished_run=True, server=None, port=None):
 
     if not "out" in config:
         config["out"] = paths["path-to-output-dir"]
-    if not "out-beegfs" in config:
-        config["out-beegfs"] = paths["path-to-beegfs-output-dir"]
+    #if not "out-beegfs" in config:
+    #    config["out-beegfs"] = paths["path-to-beegfs-output-dir"]
     if not "csv-out" in config:
         config["csv-out"] = paths["path-to-csv-output-dir"]
 
