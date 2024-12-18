@@ -8,10 +8,11 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 pyproj = "^3.7.0"
-zalfmas-common = "^0.1.8"
+#zalfmas-common = "^0.1.8"
 pyzmq = "^26.2.0"
 geopandas = "^1.0.1"
 rasterio = "^1.4.3"
+scipy = "^1.14.1"
 
 
 [build-system]

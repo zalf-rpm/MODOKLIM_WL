@@ -16,24 +16,19 @@
 # Copyright (C: Leibniz Centre for Agricultural Landscape Research (ZALF)
 
 from collections import defaultdict
-import copy
-import csv
-from datetime import date, timedelta
 import json
-import math
 import numpy as np
 import os
 from pyproj import CRS, Transformer
 import sqlite3
-import sqlite3 as cas_sq3
 import sys
 import time
 import zmq
 import geopandas as gpd
 import rasterio
-from rasterio.transform import from_origin
 from rasterio import features
 import monica_run_lib as Mrunlib
+from zalfmas_common import common
 from zalfmas_common.model import monica_io
 from zalfmas_common.soil import soil_io
 from zalfmas_common import rect_ascii_grid_management as ragm
@@ -49,17 +44,6 @@ PATHS = {
         "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
         "path-debug-write-folder": "./debug-out/",
     },
-    # adjust the local path to your environmen
-    "ow-local-remote": {
-        # "include-file-base-path": "/home/berg/GitHub/monica-parameters/", # path to monica-parameters
-        "path-to-climate-dir": "/beegfs/common/data/climate/",
-        # mounted path to archive or hard drive with climate data
-        "monica-path-to-climate-dir": "/monica_data/climate-data/",
-        # mounted path to archive accessable by monica executable
-        "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
-        "path-debug-write-folder": "./debug-out/",
-    },
-
     "mbm-local-remote": {
         # "include-file-base-path": "/home/berg/GitHub/monica-parameters/", # path to monica-parameters
         "path-to-climate-dir": "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/common/data/climate/",
@@ -78,7 +62,6 @@ PATHS = {
         "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
         "path-debug-write-folder": "./debug-out/",
     },
-
     "remoteProducer-remoteMonica": {
         # "include-file-base-path": "/monica-parameters/", # path to monica-parameters
         "path-to-climate-dir": "/data/",  # mounted path to archive or hard drive with climate data
@@ -96,7 +79,9 @@ DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 DATA_GRID_SOIL = "germany/buek200_1000_25832_etrs89-utm32n.asc"
 DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
 DATA_GRID_CROPS = "germany/WW_cropmap_BB.asc"
-TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv"
+#TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv"
+TEMPLATE_PATH_CLIMATE_CSV = "{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz"
+TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon_to_rowcol.json"
 
 # Additional data for masking the regions
 NUTS1_REGIONS = "data/germany/NUTS250_N1.shp"
@@ -116,15 +101,14 @@ DEBUG_WRITE_CLIMATE = False
 ## Make a list of the parameter values first
 
 # commandline parameters e.g "server=localhost port=6666 shared_id=2"
-def run_producer(server={"server": None, "port": None}, shared_id=None):
+def run_producer(server=None, port=None):
     context = zmq.Context()
     socket = context.socket(zmq.PUSH)  # pylint: disable=no-member
-    # config_and_no_data_socket = context.socket(zmq.PUSH)
 
     config = {
-        "mode": "re-local-remote",
-        "server-port": server["port"] if server["port"] else "6667",
-        "server": server["server"] if server["server"] else "login01.cluster.zalf.de",
+        "mode": "mbm-local-remote",
+        "server-port": port if port else "6666",
+        "server": server if server else "login01.cluster.zalf.de",
         "start-row": "0",
         "end-row": "-1",
         "path_to_dem_grid": "",
@@ -133,23 +117,14 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "site.json": "site_WL.json",
         "setups-file": "sim_setups_SG.csv",
         "run-setups": "[1]",
-        "shared_id": shared_id
     }
 
-    # read commandline args only if script is invoked directly from commandline
-    if len(sys.argv) > 1 and __name__ == "__main__":
-        for arg in sys.argv[1:]:
-            k, v = arg.split("=")
-            if k in config:
-                config[k] = v
-
-    print("config:", config)
+    common.update_config(config, sys.argv, print_config=True, allow_new_keys=False)
 
     # select paths 
     paths = PATHS[config["mode"]]
     # open soil db connection
     soil_db_con = sqlite3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB)
-    # soil_db_con = cas_sq3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB) #CAS.
     # connect to monica proxy (if local, it will try to connect to a locally started monica)
     socket.connect("tcp://" + config["server"] + ":" + str(config["server-port"]))
 
@@ -223,15 +198,15 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     print("read: ", path_to_landuse_grid)
 
     # crop mask data
-    path_to_crop_grid = paths["path-to-data-dir"] + DATA_GRID_CROPS
-    crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[2])
-    crop_crs = CRS.from_epsg(crop_epsg_code)
-    if crop_crs not in soil_crs_to_x_transformers:
-        soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
-    crop_meta, _ = ragm.read_header(path_to_crop_grid)
-    crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
-    crop_interpolate = ragm.create_interpolator_from_rect_grid(crop_grid, crop_meta)
-    print("read: ", path_to_crop_grid)
+    # path_to_crop_grid = paths["path-to-data-dir"] + DATA_GRID_CROPS
+    # crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[2])
+    # crop_crs = CRS.from_epsg(crop_epsg_code)
+    # if crop_crs not in soil_crs_to_x_transformers:
+    #     soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
+    # crop_meta, _ = ragm.read_header(path_to_crop_grid)
+    # crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
+    # crop_interpolate = ragm.create_interpolator_from_rect_grid(crop_grid, crop_meta)
+    # print("read: ", path_to_crop_grid)
 
     # Create the function for the mask. This function will later use the additional column in a setup file!
 
@@ -247,7 +222,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         rows, cols = soil_grid.shape
         mask = rasterio.features.geometry_mask([region.geometry.values[0]], out_shape=(rows, cols), transform=transform,
                                                invert=True)
-
         return mask
 
     sent_env_count = 0
@@ -271,7 +245,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         crop_id = setup["crop-id"]
         region_name = setup["region_name"]
 
-        ## extract crop_id from crop-id name that has possible an extenstion
+        ## extract crop_id from crop-id name that has possible an extension
         crop_id_short = crop_id.split('_')[0]
 
         if region_name and len(region_name) > 0:
@@ -317,6 +291,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         crop_json["CropParameters"]["__enable_vernalisation_factor_fix__"] = setup[
             "use_vernalisation_fix"] if "use_vernalisation_fix" in setup else False
 
+        crop_json["cropRotation"][2] = crop_id
+
         # create environment template from json templates
         env_template = monica_io.create_env_json_from_json_config({
             "crop": crop_json,
@@ -324,10 +300,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
             "sim": sim_json,
             "climate": ""
         })
-
-        # set shared id in template
-        if config["shared_id"]:
-            env_template["sharedId"] = config["shared_id"]
 
         scols = int(soil_metadata["ncols"])
         srows = int(soil_metadata["nrows"])
@@ -359,25 +331,25 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 sh = yllcorner + (scellsize / 2) + (srows - srow - 1) * scellsize
                 sr = xllcorner + (scellsize / 2) + scol * scellsize
                 # inter = crow/ccol encoded into integer
-                crow, ccol = climate_data_interpolator(sr, sh)
+                crow, ccol = map(int, climate_data_interpolator(sr, sh))
 
-                crop_grid_id = int(crop_grid[srow, scol])
-                # print(crop_grid_id)
-                if crop_grid_id != 1 or soil_id == -8888:
-                    # print("row/col:", srow, "/", scol, "is not a crop pixel.")
-                    env_template["customId"] = {
-                        "setup_id": setup_id,
-                        "srow": srow, "scol": scol,
-                        "crow": int(crow), "ccol": int(ccol),
-                        "soil_id": soil_id,
-                        "env_id": sent_env_count,
-                        "nodata": True,
-                    }
-                    if not DEBUG_DONOT_SEND:
-                        socket.send_json(env_template)
-                        # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
-                        sent_env_count += 1
-                    continue
+                # crop_grid_id = int(crop_grid[srow, scol])
+                # # print(crop_grid_id)
+                # if crop_grid_id != 1 or soil_id == -8888:
+                #     # print("row/col:", srow, "/", scol, "is not a crop pixel.")
+                #     env_template["customId"] = {
+                #         "setup_id": setup_id,
+                #         "srow": srow, "scol": scol,
+                #         "crow": int(crow), "ccol": int(ccol),
+                #         "soil_id": soil_id,
+                #         "env_id": sent_env_count,
+                #         "nodata": True,
+                #     }
+                #     if not DEBUG_DONOT_SEND:
+                #         socket.send_json(env_template)
+                #         # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
+                #         sent_env_count += 1
+                #     continue
 
                 tcoords = {}
 
@@ -421,14 +393,11 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 slr, slh = tcoords[slope_crs]
                 slope = slope_interpolate(slr, slh)
 
-                
-
                 env_template["params"]["userCropParameters"]["__enable_T_response_leaf_expansion__"] = setup[
                     "LeafExtensionModifier"]
 
                 # print("soil:", soil_profile)
                 env_template["params"]["siteParameters"]["SoilProfileParameters"] = soil_profile
-
 
                 if setup["elevation"]:
                     env_template["params"]["siteParameters"]["heightNN"] = float(height_nn)

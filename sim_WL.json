@@ -39,6 +39,7 @@
 
 		"events": [
 			"daily", [
+				"Year",
 				"Date",
 				"Crop",
 				"Stage",
