@@ -333,9 +333,14 @@ def run_producer(server=None, port=None):
                 # inter = crow/ccol encoded into integer
                 crow, ccol = map(int, climate_data_interpolator(sr, sh))
 
-                crop_grid_id = int(crop_grid[srow, scol])
+
+                if crop_crs not in tcoords:
+                    tcoords[crop_crs] = soil_crs_to_x_transformers[crop_crs].transform(sr, sh)
+                cropr, croph = tcoords[crop_crs]
+                crop_grid_id = crop_interpolate(cropr, croph)
+                #crop_grid_id = int(crop_grid[srow, scol])
                 # print(crop_grid_id)
-                if crop_grid_id != 1 or soil_id == -8888:
+                if crop_grid_id != 4 or soil_id == -8888:
                     # print("row/col:", srow, "/", scol, "is not a crop pixel.")
                     env_template["customId"] = {
                         "setup_id": setup_id,
