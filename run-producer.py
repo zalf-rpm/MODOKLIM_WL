@@ -78,7 +78,7 @@ DATA_GRID_SLOPE = "germany/slope_1000_25832_etrs89-utm32n.asc"
 DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 DATA_GRID_SOIL = "germany/buek200_1000_25832_etrs89-utm32n.asc"
 DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
-DATA_GRID_CROPS = "germany/Germany_Cropmap2023_1000_25832_etrs89-utm32n.asc"
+DATA_GRID_CROPS = "germany/Germany-Cropmap2023_1000_25832_etrs89-utm32n.asc"
 #TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv"
 TEMPLATE_PATH_CLIMATE_CSV = "{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz"
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon_to_rowcol.json"
@@ -205,7 +205,7 @@ def run_producer(server=None, port=None):
         soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
     crop_meta, _ = ragm.read_header(path_to_crop_grid)
     crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
-    crop_interpolate = ragm.create_interpolator_from_rect_grid(crop_grid, crop_meta, ignore_nodata=False)
+    crop_interpolate = ragm.create_interpolator_from_rect_grid(crop_grid, crop_meta)
     print("read: ", path_to_crop_grid)
 
     # Create the function for the mask. This function will later use the additional column in a setup file!
