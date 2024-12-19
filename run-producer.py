@@ -90,7 +90,7 @@ TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/WW_WL_{crop_
 
 gdf = gpd.read_file(NUTS1_REGIONS)
 
-DEBUG_DONOT_SEND = False
+DEBUG_DONOT_SEND = True
 DEBUG_WRITE = False
 DEBUG_ROWS = 10
 DEBUG_WRITE_FOLDER = "./debug_out"
@@ -205,7 +205,7 @@ def run_producer(server=None, port=None):
         soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
     crop_meta, _ = ragm.read_header(path_to_crop_grid)
     crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
-    crop_interpolate = ragm.create_interpolator_from_rect_grid(crop_grid, crop_meta)
+    crop_interpolate = ragm.create_interpolator_from_rect_grid(crop_grid, crop_meta, ignore_nodata=False)
     print("read: ", path_to_crop_grid)
 
     # Create the function for the mask. This function will later use the additional column in a setup file!
@@ -333,11 +333,12 @@ def run_producer(server=None, port=None):
                 # inter = crow/ccol encoded into integer
                 crow, ccol = map(int, climate_data_interpolator(sr, sh))
 
+                tcoords = {}
 
                 if crop_crs not in tcoords:
                     tcoords[crop_crs] = soil_crs_to_x_transformers[crop_crs].transform(sr, sh)
                 cropr, croph = tcoords[crop_crs]
-                crop_grid_id = crop_interpolate(cropr, croph)
+                crop_grid_id = int(crop_interpolate(cropr, croph))
                 #crop_grid_id = int(crop_grid[srow, scol])
                 # print(crop_grid_id)
                 if crop_grid_id != 4 or soil_id == -8888:
@@ -355,8 +356,6 @@ def run_producer(server=None, port=None):
                         # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
                         sent_env_count += 1
                     continue
-
-                tcoords = {}
 
                 if soil_id in soil_id_cache:
                     soil_profile = soil_id_cache[soil_id]
