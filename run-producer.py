@@ -78,7 +78,7 @@ DATA_GRID_SLOPE = "germany/slope_1000_25832_etrs89-utm32n.asc"
 DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 DATA_GRID_SOIL = "germany/buek200_1000_25832_etrs89-utm32n.asc"
 DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
-DATA_GRID_CROPS = "germany/WW_cropmap_BB.asc"
+DATA_GRID_CROPS = "germany/WWCropmap2023_1000_25832_etrs89-utm32n.asc"
 #TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv"
 TEMPLATE_PATH_CLIMATE_CSV = "{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz"
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon_to_rowcol.json"
@@ -198,15 +198,15 @@ def run_producer(server=None, port=None):
     print("read: ", path_to_landuse_grid)
 
     # crop mask data
-    # path_to_crop_grid = paths["path-to-data-dir"] + DATA_GRID_CROPS
-    # crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[2])
-    # crop_crs = CRS.from_epsg(crop_epsg_code)
-    # if crop_crs not in soil_crs_to_x_transformers:
-    #     soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
-    # crop_meta, _ = ragm.read_header(path_to_crop_grid)
-    # crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
-    # crop_interpolate = ragm.create_interpolator_from_rect_grid(crop_grid, crop_meta)
-    # print("read: ", path_to_crop_grid)
+    path_to_crop_grid = paths["path-to-data-dir"] + DATA_GRID_CROPS
+    crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[2])
+    crop_crs = CRS.from_epsg(crop_epsg_code)
+    if crop_crs not in soil_crs_to_x_transformers:
+        soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
+    crop_meta, _ = ragm.read_header(path_to_crop_grid)
+    crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
+    crop_interpolate = ragm.create_interpolator_from_rect_grid(crop_grid, crop_meta)
+    print("read: ", path_to_crop_grid)
 
     # Create the function for the mask. This function will later use the additional column in a setup file!
 
@@ -333,23 +333,23 @@ def run_producer(server=None, port=None):
                 # inter = crow/ccol encoded into integer
                 crow, ccol = map(int, climate_data_interpolator(sr, sh))
 
-                # crop_grid_id = int(crop_grid[srow, scol])
-                # # print(crop_grid_id)
-                # if crop_grid_id != 1 or soil_id == -8888:
-                #     # print("row/col:", srow, "/", scol, "is not a crop pixel.")
-                #     env_template["customId"] = {
-                #         "setup_id": setup_id,
-                #         "srow": srow, "scol": scol,
-                #         "crow": int(crow), "ccol": int(ccol),
-                #         "soil_id": soil_id,
-                #         "env_id": sent_env_count,
-                #         "nodata": True,
-                #     }
-                #     if not DEBUG_DONOT_SEND:
-                #         socket.send_json(env_template)
-                #         # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
-                #         sent_env_count += 1
-                #     continue
+                crop_grid_id = int(crop_grid[srow, scol])
+                # print(crop_grid_id)
+                if crop_grid_id != 1 or soil_id == -8888:
+                    # print("row/col:", srow, "/", scol, "is not a crop pixel.")
+                    env_template["customId"] = {
+                        "setup_id": setup_id,
+                        "srow": srow, "scol": scol,
+                        "crow": int(crow), "ccol": int(ccol),
+                        "soil_id": soil_id,
+                        "env_id": sent_env_count,
+                        "nodata": True,
+                    }
+                    if not DEBUG_DONOT_SEND:
+                        socket.send_json(env_template)
+                        # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
+                        sent_env_count += 1
+                    continue
 
                 tcoords = {}
 

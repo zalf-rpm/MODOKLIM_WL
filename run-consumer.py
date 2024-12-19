@@ -90,16 +90,7 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
 
     output_grids = {
         "TimeUnderAnoxia": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        "OxygenDeficit": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        "LAI": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        "AbBiom": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        "TRANS": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        "Act_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        "RunOff": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        "sws": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        "DPER_1": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        "Infiltration": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        "NLEA": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
+        "OxygenDeficit": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3}
     }
     for i in range(1, 14+1):
         output_grids[f"SMC_{i}"] = {"data": make_dict_nparr(), "cast-to": "float", "digits": 3}
