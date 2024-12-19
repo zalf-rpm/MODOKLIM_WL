@@ -90,7 +90,7 @@ TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/WW_WL_{crop_
 
 gdf = gpd.read_file(NUTS1_REGIONS)
 
-DEBUG_DONOT_SEND = True
+DEBUG_DONOT_SEND = False
 DEBUG_WRITE = False
 DEBUG_ROWS = 10
 DEBUG_WRITE_FOLDER = "./debug_out"
