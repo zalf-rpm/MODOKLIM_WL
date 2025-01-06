@@ -44,7 +44,7 @@
 				"Crop",
 				"Stage",
 				"TimeUnderAnoxia",
-				"OxygenDeficit"
+				"OxRed|OxygenDeficit"
 			]
 		]
 	},
