@@ -89,9 +89,15 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
     make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=float))
 
     output_grids = {
-        "TimeUnderAnoxia": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        "OxygenDeficit": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3}
+        "Stage": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3}
     }
+
+    # output_grids = {
+    #     "TimeUnderAnoxia": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
+    #     "OxygenDeficit": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3}
+    # }
+
+
     #for i in range(1, 14+1):
     #    output_grids[f"SMC_{i}"] = {"data": make_dict_nparr(), "cast-to": "float", "digits": 3}
     output_keys = list(output_grids.keys())
