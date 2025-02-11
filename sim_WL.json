@@ -43,6 +43,7 @@
 				"Date",
 				"Crop",
 				"Stage",
+				"Yield",
 				"TimeUnderAnoxia",
 				"OxRed|OxygenDeficit"
 			]
