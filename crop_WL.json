@@ -21,7 +21,7 @@
 			"is-winter-crop": true,
 			"cropParams": {
 				"species": ["include-from-file", "crops/species/maize.json"],
-				"cultivar": ["include-from-file", "crops/cultivars/grain-maize.json"]
+				"cultivar": ["include-from-file", "crops/cultivars/grain-maize_bs.json"]
 			},
 			"residueParams": ["include-from-file", "crops/residues/maize.json"]
 		},
@@ -153,7 +153,7 @@
 				},
 				{
 					"type": "AutomaticHarvest",
-					"latest-date": "0000-10-31",
+					"latest-date": "0000-09-31",
 					"min-%-asw": 0,
 					"max-%-asw": 99.0,
 					"max-3d-precip-sum": 5,
