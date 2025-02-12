@@ -1,11 +1,11 @@
   {
 	"__note__": "01/2022 : Final version for setups with fixed sowing dates, automatic harvest dates and phenology calibrated to DWD data. Adapted from HERMES2Go, BBG Project",
 	"crops": {
-		"WW_dwd": {
+		"SW_dwd": {
 			"is-winter-crop": true,
 			"cropParams": {
 				"species": ["include-from-file", "crops/species/wheat.json"],
-				"cultivar": ["include-from-file", "crops/cultivars/winter-wheat_GESC.json"]
+				"cultivar": ["include-from-file", "crops/cultivars/spring-wheat.json"]
 			},
 			"residueParams": ["include-from-file", "crops/residues/wheat.json"] 
 		}
@@ -16,10 +16,10 @@
 		"CAM": ["include-from-file", "organic-fertilisers/CAM.json"]
 	}, 	
 	"cropRotationTemplates": {
-		"WW_sfix_hauto": [{
+		"SW_sfix_hauto": [{
 			"worksteps": [
 				{
-					"date": "0000-09-22", "type": "Sowing", "crop": ["ref", "crops", "WW_dwd"] 
+					"date": "0000-03-01", "type": "Sowing", "crop": ["ref", "crops", "SW_dwd"] 
 				},
 				{
 					"type": "NDemandFertilization",
@@ -47,7 +47,7 @@
 				},
 				{ 
 					"type": "AutomaticHarvest", 
-					"latest-date": "0001-09-05",
+					"latest-date": "0000-09-05",
 					"min-%-asw": 0,
 					"max-%-asw": 99.0,
 					"max-3d-precip-sum": 2,
