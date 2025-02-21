@@ -89,7 +89,9 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
     make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=float))
 
     output_grids = {
-        "Stage": {"data": make_dict_nparr(), "cast-to": "float", "digits": 0}
+        # "Stage": {"data": make_dict_nparr(), "cast-to": "float", "digits": 0}
+        "Mois|SWC": {"data": make_dict_nparr(), "cast-to": "float", "digits": 0}
+
     }
 
     # output_grids = {

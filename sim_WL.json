@@ -44,6 +44,7 @@
 				"Crop",
 				"Stage",
 				"Yield",
+				["Mois|SWC", [1, 20]],
 				"TimeUnderAnoxia",
 				"OxRed|OxygenDeficit"
 			]
