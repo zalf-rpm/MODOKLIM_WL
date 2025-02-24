@@ -172,7 +172,7 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
             crop = cmc_to_crop[cm_count] if cm_count in cmc_to_crop else "none"
             crop = crop.replace("/", "").replace(" ", "")
             #path_to_file = path_to_output_dir + crop + "_" + key + "_" + str(year) + "_" + str(cm_count) + ".asc"
-            path_to_file = f"{path_to_output_dir}{key}_{cm_count}.csv"
+            path_to_file = f"{path_to_output_dir}{key}_{cm_count}.asc"
 
             if not os.path.isfile(path_to_file):
                 with open(path_to_file, "w") as _:
