@@ -73,7 +73,7 @@ PATHS = {
 }
 
 DATA_SOIL_DB = "germany/buek200.sqlite"
-DATA_GRID_HEIGHT = "germany/MOL_dem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
 DATA_GRID_SLOPE = "germany/MOL_slope_100_25832_etrs89-utm32n.asc"
 DATA_GRID_LAND_USE = "germany/MOL_landuse_100_31469_gk5.asc.gz"
 DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
