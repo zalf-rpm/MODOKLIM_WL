@@ -258,10 +258,10 @@
 		"=": ["include-from-file", "general/crop.json"],
 		"__enable_vernalisation_factor_fix__": true,
 		"TimeUnderAnoxiaThreshold": [
-			8.70279,
+			6.70279,
 			5.46626,
 			5.4762,
-			4.17011,
+			3.17011,
 			7.57003,
 			6.55556
 		]
