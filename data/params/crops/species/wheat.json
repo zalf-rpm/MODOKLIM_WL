@@ -18,8 +18,8 @@
   "CarboxylationPathway":1,
   "CriticalOxygenContent":[  
     0.02,
-    0.1,
-    0.12,
+    0.15,
+    0.012,
     0.06,
     0.05,
     0.03  
