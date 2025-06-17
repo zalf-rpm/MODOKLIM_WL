@@ -260,10 +260,10 @@
 		"TimeUnderAnoxiaThreshold": [
 			1,
 			1,
-			5,
+			9,
 			4,
-			5,
-			5
+			7,
+			6
 		]
 	}
 }
