@@ -59,7 +59,6 @@
 	"WaterDeficitResponseOn": true,
 	"EmergenceMoistureControlOn": false,
 	"EmergenceFloodingControlOn": false,
-
 	"UseAutomaticIrrigation": false,
 	"AutoIrrigationParams": {
 		"irrigationParameters": {
