@@ -19,10 +19,10 @@
   "CriticalOxygenContent":[  
     0.1,
     0.08,
-    0.02,
-    0.1,
-    0.06,
-    0.1 
+    0.05,
+    0.11,
+    0.09,
+    0.01 
   ],
   "CuttingDelayDays":0,
   "DefaultRadiationUseEfficiency":0.5,
