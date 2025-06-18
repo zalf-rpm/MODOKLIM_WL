@@ -259,7 +259,7 @@
 		"__enable_vernalisation_factor_fix__": true,
 		"TimeUnderAnoxiaThreshold": [
 			99,
-			99,
+			2,
 			3,
 			2,
 			99,
