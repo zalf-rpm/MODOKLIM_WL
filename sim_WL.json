@@ -57,7 +57,7 @@
 	"UseSecondaryYields": false,
 	"NitrogenResponseOn": true,
 	"WaterDeficitResponseOn": true,
-	"EmergenceMoistureControlOn": false,
+	"EmergenceMoistureControlOn": true,
 	"EmergenceFloodingControlOn": false,
 	"UseAutomaticIrrigation": false,
 	"AutoIrrigationParams": {
