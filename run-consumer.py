@@ -95,7 +95,19 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
     # }
 
     output_grids = {
+<<<<<<< HEAD
         "TimeUnderAnoxia": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3}   
+=======
+<<<<<<< HEAD
+        "TimeUnderAnoxia": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3}
+        
+        # "OxygenDeficit": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3}
+=======
+        # "TimeUnderAnoxia": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
+        "OxygenDeficit": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3}
+>>>>>>> parent of 8438edf (Update run-consumer.py)
+        
+>>>>>>> parent of 8d415bc (change)
     }
 
 
