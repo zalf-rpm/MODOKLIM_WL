@@ -17,21 +17,12 @@
   ],
   "CarboxylationPathway":1,
   "CriticalOxygenContent":[  
-<<<<<<< HEAD
-    0.01,
-    0.19,
-    0.022,
-    0.055,
-    0.0168,
-    0.0241  
-=======
     0.08,
     0.08,
     0.08,
     0.08,
     0.08,
     0.08
->>>>>>> parent of cc1184e (Merge branch 'main' of https://github.com/zalf-rpm/MODOKLIM_WL)
   ],
   "CuttingDelayDays":0,
   "DefaultRadiationUseEfficiency":0.5,
