@@ -44,6 +44,12 @@
 				"Crop",
 				"Stage",
 				"Yield",
+				["Sat|Sat_1", 1],
+				["Sat|Sat_2", 2],
+				["Sat|Sat_3", 3],
+				["Sat|Sat_4", 4],
+				["Sat|Sat1-4", [1, 4, "SUM"]],
+				["Rooting_Depth"],
 				["Mois|SWC", [1, 1]],
 				"TimeUnderAnoxia",
 				"OxRed|OxygenDeficit"
