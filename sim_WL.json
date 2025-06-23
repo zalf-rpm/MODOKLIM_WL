@@ -49,7 +49,7 @@
 				["Sat|Sat_3", 3],
 				["Sat|Sat_4", 4],
 				["Sat|Sat1-4", [1, 4, "SUM"]],
-				["Rooting_Depth"],
+				["RootDep"],
 				["Mois|SWC", [1, 1]],
 				"TimeUnderAnoxia",
 				"OxRed|OxygenDeficit"
