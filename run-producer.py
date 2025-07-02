@@ -81,12 +81,12 @@ PATHS = {
 # DATA_GRID_CROPS = "germany/MOLLLL-crop-wr_100_25832_etrs89-utm32n.asc"
 
 DATA_SOIL_DB = "germany/buek200.sqlite"
-DATA_GRID_HEIGHT = "germany/MOL-dem-wr_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/MOL-slop-wr_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/Bossen-dem-wr_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/Bossen-slop-wr_100_25832_etrs89-utm32n.asc"
 DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
-DATA_GRID_SOIL = "germany/MOL-buek-wr_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/Bossen-buek-wr_100_25832_etrs89-utm32n.asc"
 DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
-DATA_GRID_CROPS = "germany/MOLLLL-crop-wr_100_25832_etrs89-utm32n.asc"
+DATA_GRID_CROPS = "germany/Bossen-crop-wr_100_25832_etrs89-utm32n.asc"
 
 #TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv"
 TEMPLATE_PATH_CLIMATE_CSV = "{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz"
@@ -355,7 +355,7 @@ def run_producer(server=None, port=None):
                     print("srow:", srow, "scol:", scol, "sh:", sh, "sr:", sr, "cropId:", crop_grid_id, flush=True)
 
                 
-                if crop_grid_id != 3 or soil_id == -8888:
+                if crop_grid_id != 0 or soil_id == -8888:
                     # print("row/col:", srow, "/", scol, "is not a crop pixel.")
                     env_template["customId"] = {
                         "setup_id": setup_id,
