@@ -16,6 +16,7 @@
 # Copyright (C: Leibniz Centre for Agricultural Landscape Research (ZALF)
 
 from collections import defaultdict
+import csv
 import json
 import numpy as np
 import os
@@ -24,6 +25,7 @@ import sqlite3
 import sys
 import time
 import zmq
+from scipy.interpolate import NearestNDInterpolator
 import geopandas as gpd
 import rasterio
 from rasterio import features
@@ -82,7 +84,7 @@ PATHS = {
 
 DATA_SOIL_DB = "germany/buek200.sqlite"
 DATA_GRID_HEIGHT = "germany/Bossen-dem-wr_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/Bossen-slop-wr_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/Bossen-slope-wr_100_25832_etrs89-utm32n.asc"
 DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 DATA_GRID_SOIL = "germany/Bossen-buek-wr_100_25832_etrs89-utm32n.asc"
 DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
@@ -126,6 +128,7 @@ def run_producer(server=None, port=None):
         "site.json": "site_WL.json",
         "setups-file": "sim_setups_SG.csv",
         "run-setups": "[1]",
+        "use_csv_soils": True,
     }
 
     common.update_config(config, sys.argv, print_config=True, allow_new_keys=False)
@@ -172,6 +175,50 @@ def run_producer(server=None, port=None):
     soil_metadata, _ = ragm.read_header(path_to_soil_grid)
     soil_grid = np.loadtxt(path_to_soil_grid, dtype=int, skiprows=6)
     print("read: ", path_to_soil_grid)
+
+    csv_soil_profiles = {}
+    csv_soil_interpolate = None
+    csv_soils_crs = CRS.from_epsg(25833)
+    soil_crs_to_x_transformers[csv_soils_crs] = Transformer.from_crs(soil_crs, csv_soils_crs, always_xy=True)
+    if config["use_csv_soils"]:
+        with open(f"{paths['path-to-data-dir']}/germany/data_CSV_sim_LEAN_result.csv") as file:
+            dialect = csv.Sniffer().sniff(file.read(), delimiters=';,\t')
+            file.seek(0)
+            reader = csv.reader(file, dialect)
+            header_line = next(reader)
+            header = {h: i for i, h in enumerate(header_line)}
+            points = []
+            values = []
+            for line in reader:
+                r = int(line[header["X"]])
+                h = int(line[header["Y"]])
+                points.append([r, h])
+                values.append((r, h))
+                profile = [
+                    {
+                        "Thickness": [0.3, "m"],
+                        "SoilBulkDensity": [1400, "kg/m3"],
+                        "SoilOrganicCarbon": [float(line[header["Corg"]]), "%"],
+                        "Clay": [float(line[header["SAND_0"]]) / 100.0, "m3/m3"],
+                        "Sand": [float(line[header["CLAY_0"]]) / 100.0, "m3/m3"],
+                    },
+                    {
+                        "Thickness": [0.3, "m"],
+                        "SoilBulkDensity": [1400, "kg/m3"],
+                        "SoilOrganicCarbon": [float(line[header["Corg"]]), "%"],
+                        "Clay": [float(line[header["SAND_30"]]) / 100.0, "m3/m3"],
+                        "Sand": [float(line[header["CLAY_30"]]) / 100.0, "m3/m3"],
+                    },
+                    {
+                        "Thickness": [0.3, "m"],
+                        "SoilBulkDensity": [1400, "kg/m3"],
+                        "SoilOrganicCarbon": [float(line[header["Corg"]]), "%"],
+                        "Clay": [float(line[header["SAND_60"]]) / 100.0, "m3/m3"],
+                        "Sand": [float(line[header["CLAY_60"]]) / 100.0, "m3/m3"],
+                    }
+                ]
+                csv_soil_profiles[(r, h)] = profile
+            csv_soil_interpolate = NearestNDInterpolator(np.array(points), np.array(values))
 
     # height data for germany
     path_to_dem_grid = paths["path-to-data-dir"] + DATA_GRID_HEIGHT
@@ -366,16 +413,21 @@ def run_producer(server=None, port=None):
                         "nodata": True,
                     }
                     if not DEBUG_DONOT_SEND:
-                        socket.send_json(env_template)
+                        #socket.send_json(env_template)
                         # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
                         sent_env_count += 1
                     continue
 
-                if soil_id in soil_id_cache:
-                    soil_profile = soil_id_cache[soil_id]
+                if config["use_csv_soils"]:
+                    csvs_r, csvs_h = soil_crs_to_x_transformers[csv_soils_crs].transform(sr, sh)
+                    csvp_r, csvp_h = csv_soil_interpolate(csvs_r, csvs_h)
+                    soil_profile = csv_soil_profiles.get((csvp_r, csvp_h), [])
                 else:
-                    soil_profile = soil_io.soil_parameters(soil_db_con, soil_id)
-                    soil_id_cache[soil_id] = soil_profile
+                    if soil_id in soil_id_cache:
+                        soil_profile = soil_id_cache[soil_id]
+                    else:
+                        soil_profile = soil_io.soil_parameters(soil_db_con, soil_id)
+                        soil_id_cache[soil_id] = soil_profile
 
                 if len(soil_profile) == 0:
                     env_template["customId"] = {
