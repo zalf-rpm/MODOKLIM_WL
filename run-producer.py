@@ -86,7 +86,7 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 DATA_GRID_HEIGHT = "germany/Bossen-dem-wr_100_25832_etrs89-utm32n.asc"
 DATA_GRID_SLOPE = "germany/Bossen-slope-wr_100_25832_etrs89-utm32n.asc"
 DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
-DATA_GRID_SOIL = "germany/Bossen-buek-wr_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/MOL-buek-wr_100_25832_etrs89-utm32n.asc"
 DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
 DATA_GRID_CROPS = "germany/Bossen-crop-wr_100_25832_etrs89-utm32n.asc"
 
