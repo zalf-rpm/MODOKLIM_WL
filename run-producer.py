@@ -197,21 +197,21 @@ def run_producer(server=None, port=None):
                 profile = [
                     {
                         "Thickness": [0.3, "m"],
-                        "SoilBulkDensity": [1400, "kg/m3"],
+                        "SoilBulkDensity": [1300, "kg/m3"],
                         "SoilOrganicCarbon": [float(line[header["Corg"]]), "%"],
                         "Clay": [float(line[header["SAND_0"]]) / 100.0, "m3/m3"],
                         "Sand": [float(line[header["CLAY_0"]]) / 100.0, "m3/m3"],
                     },
                     {
                         "Thickness": [0.3, "m"],
-                        "SoilBulkDensity": [1400, "kg/m3"],
+                        "SoilBulkDensity": [1500, "kg/m3"],
                         "SoilOrganicCarbon": [float(line[header["Corg"]]), "%"],
                         "Clay": [float(line[header["SAND_30"]]) / 100.0, "m3/m3"],
                         "Sand": [float(line[header["CLAY_30"]]) / 100.0, "m3/m3"],
                     },
                     {
                         "Thickness": [0.3, "m"],
-                        "SoilBulkDensity": [1400, "kg/m3"],
+                        "SoilBulkDensity": [1700, "kg/m3"],
                         "SoilOrganicCarbon": [float(line[header["Corg"]]), "%"],
                         "Clay": [float(line[header["SAND_60"]]) / 100.0, "m3/m3"],
                         "Sand": [float(line[header["CLAY_60"]]) / 100.0, "m3/m3"],
@@ -413,7 +413,7 @@ def run_producer(server=None, port=None):
                         "nodata": True,
                     }
                     if not DEBUG_DONOT_SEND:
-                        #socket.send_json(env_template)
+                        socket.send_json(env_template)
                         # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
                         sent_env_count += 1
                     continue
