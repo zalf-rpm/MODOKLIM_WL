@@ -83,12 +83,12 @@ PATHS = {
 # DATA_GRID_CROPS = "germany/MOLLLL-crop-wr_100_25832_etrs89-utm32n.asc"
 
 DATA_SOIL_DB = "germany/buek200.sqlite"
-DATA_GRID_HEIGHT = "germany/Bossen-dem-wr_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/Bossen-slope-wr_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/MOL-dem-wr_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/MOL-slope-wr_100_25832_etrs89-utm32n.asc"
 DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
-DATA_GRID_SOIL = "germany/Bossen-buek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/MOL-buek200_100_25832_etrs89-utm32n.asc"
 DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
-DATA_GRID_CROPS = "germany/Bossen-crop-wr_100_25832_etrs89-utm32n.asc"
+DATA_GRID_CROPS = "germany/Hermes-crop-wr_100_25832_etrs89-utm32n.asc"
 
 #TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv"
 TEMPLATE_PATH_CLIMATE_CSV = "{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz"
@@ -181,7 +181,7 @@ def run_producer(server=None, port=None):
     csv_soils_crs = CRS.from_epsg(25833)
     soil_crs_to_x_transformers[csv_soils_crs] = Transformer.from_crs(soil_crs, csv_soils_crs, always_xy=True)
     if config["use_csv_soils"]:
-        with open(f"{paths['path-to-data-dir']}/germany/data_CSV_sim_LEAN_result.csv") as file:
+        with open(f"{paths['path-to-data-dir']}/germany/Final_Hermes_Soil.csv") as file:
             dialect = csv.Sniffer().sniff(file.read(), delimiters=';,\t')
             file.seek(0)
             reader = csv.reader(file, dialect)
@@ -197,24 +197,27 @@ def run_producer(server=None, port=None):
                 profile = [
                     {
                         "Thickness": [0.3, "m"],
-                        "SoilBulkDensity": [1300, "kg/m3"],
-                        "SoilOrganicCarbon": [float(line[header["Corg"]]), "%"],
-                        "Clay": [float(line[header["SAND_0"]]) / 100.0, "m3/m3"],
-                        "Sand": [float(line[header["CLAY_0"]]) / 100.0, "m3/m3"],
-                    },
-                    {
-                        "Thickness": [0.3, "m"],
                         "SoilBulkDensity": [1500, "kg/m3"],
-                        "SoilOrganicCarbon": [float(line[header["Corg"]]), "%"],
-                        "Clay": [float(line[header["SAND_30"]]) / 100.0, "m3/m3"],
-                        "Sand": [float(line[header["CLAY_30"]]) / 100.0, "m3/m3"],
+                        "SoilOrganicCarbon": [float(line[header["00-30_Corg"]]), "%"],
+                        "Clay": [float(line[header["00-30_SAND"]]) / 100.0, "m3/m3"],
+                        "Sand": [float(line[header["00-30_CLAY"]]) / 100.0, "m3/m3"],
+                        "Silt": [float(line[header["00-30_Silt"]]) / 100.0, "m3/m3"],
                     },
                     {
                         "Thickness": [0.3, "m"],
                         "SoilBulkDensity": [1700, "kg/m3"],
-                        "SoilOrganicCarbon": [float(line[header["Corg"]]), "%"],
-                        "Clay": [float(line[header["SAND_60"]]) / 100.0, "m3/m3"],
-                        "Sand": [float(line[header["CLAY_60"]]) / 100.0, "m3/m3"],
+                        "SoilOrganicCarbon": [float(line[header["30-60_Corg"]]), "%"],
+                        "Clay": [float(line[header["30-60_SAND"]]) / 100.0, "m3/m3"],
+                        "Sand": [float(line[header["30-60_CLAY"]]) / 100.0, "m3/m3"],
+                        "Silt": [float(line[header["30-60_Silt"]]) / 100.0, "m3/m3"],
+                    },
+                    {
+                        "Thickness": [0.3, "m"],
+                        "SoilBulkDensity": [1700, "kg/m3"],
+                        "SoilOrganicCarbon": [float(line[header["60-90_Corg"]]), "%"],
+                        "Clay": [float(line[header["60-90_SAND"]]) / 100.0, "m3/m3"],
+                        "Sand": [float(line[header["60-90_CLAY"]]) / 100.0, "m3/m3"],
+                        "Silt": [float(line[header["60-90_Silt"]]) / 100.0, "m3/m3"],
                     }
                 ]
                 csv_soil_profiles[(r, h)] = profile
