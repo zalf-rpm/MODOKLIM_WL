@@ -401,11 +401,11 @@ def run_producer(server=None, port=None):
                 #crop_grid_id = int(crop_grid[srow, scol])
                 # print(crop_grid_id)
                  # print(crop_grid_id)
-                if crop_grid_id==3:
+                if crop_grid_id==1:
                     print("srow:", srow, "scol:", scol, "sh:", sh, "sr:", sr, "cropId:", crop_grid_id, flush=True)
 
                 
-                if crop_grid_id != 0 or soil_id == -8888:
+                if crop_grid_id != 1 or soil_id == -8888:
                     # print("row/col:", srow, "/", scol, "is not a crop pixel.")
                     env_template["customId"] = {
                         "setup_id": setup_id,
