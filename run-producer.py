@@ -198,26 +198,26 @@ def run_producer(server=None, port=None):
                     {
                         "Thickness": [0.3, "m"],
                         "SoilBulkDensity": [1500, "kg/m3"],
-                        "SoilOrganicCarbon": [float(line[header["00-30_Corg"]]), "%"],
-                        "Clay": [float(line[header["00-30_SAND"]]) / 100.0, "m3/m3"],
-                        "Sand": [float(line[header["00-30_CLAY"]]) / 100.0, "m3/m3"],
-                        "Silt": [float(line[header["00-30_Silt"]]) / 100.0, "m3/m3"],
+                        "SoilOrganicCarbon": [float(line[header["Corg_0"]]), "%"],
+                        "Clay": [float(line[header["Sand_0"]]) / 100.0, "m3/m3"],
+                        "Sand": [float(line[header["CLAY_0"]]) / 100.0, "m3/m3"],
+                        "Silt": [float(line[header["Silt-0"]]) / 100.0, "m3/m3"],
                     },
                     {
                         "Thickness": [0.3, "m"],
                         "SoilBulkDensity": [1700, "kg/m3"],
-                        "SoilOrganicCarbon": [float(line[header["30-60_Corg"]]), "%"],
-                        "Clay": [float(line[header["30-60_SAND"]]) / 100.0, "m3/m3"],
-                        "Sand": [float(line[header["30-60_CLAY"]]) / 100.0, "m3/m3"],
-                        "Silt": [float(line[header["30-60_Silt"]]) / 100.0, "m3/m3"],
+                        "SoilOrganicCarbon": [float(line[header["Corg_30"]]), "%"],
+                        "Clay": [float(line[header["Sand_30"]]) / 100.0, "m3/m3"],
+                        "Sand": [float(line[header["CLAY_30"]]) / 100.0, "m3/m3"],
+                        "Silt": [float(line[header["Silt-30"]]) / 100.0, "m3/m3"],
                     },
                     {
                         "Thickness": [0.3, "m"],
                         "SoilBulkDensity": [1700, "kg/m3"],
-                        "SoilOrganicCarbon": [float(line[header["60-90_Corg"]]), "%"],
-                        "Clay": [float(line[header["60-90_SAND"]]) / 100.0, "m3/m3"],
-                        "Sand": [float(line[header["60-90_CLAY"]]) / 100.0, "m3/m3"],
-                        "Silt": [float(line[header["60-90_Silt"]]) / 100.0, "m3/m3"],
+                        "SoilOrganicCarbon": [float(line[header["Corg_60"]]), "%"],
+                        "Clay": [float(line[header["Sand_60"]]) / 100.0, "m3/m3"],
+                        "Sand": [float(line[header["CLAY_60"]]) / 100.0, "m3/m3"],
+                        "Silt": [float(line[header["Silt-60"]]) / 100.0, "m3/m3"],
                     }
                 ]
                 csv_soil_profiles[(r, h)] = profile
