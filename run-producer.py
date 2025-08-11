@@ -181,7 +181,7 @@ def run_producer(server=None, port=None):
     csv_soils_crs = CRS.from_epsg(25833)
     soil_crs_to_x_transformers[csv_soils_crs] = Transformer.from_crs(soil_crs, csv_soils_crs, always_xy=True)
     if config["use_csv_soils"]:
-        with open(f"{paths['path-to-data-dir']}/germany/Final_Hermes_Soil.csv") as file:
+        with open(f"{paths['path-to-data-dir']}/germany/Soil_data_Hermes.csv") as file:
             dialect = csv.Sniffer().sniff(file.read(), delimiters=';,\t')
             file.seek(0)
             reader = csv.reader(file, dialect)
@@ -190,34 +190,34 @@ def run_producer(server=None, port=None):
             points = []
             values = []
             for line in reader:
-                r = int(line[header["X"]])
-                h = int(line[header["Y"]])
+                r = int(line[header["Easting"]])
+                h = int(line[header["Northing"]])
                 points.append([r, h])
                 values.append((r, h))
                 profile = [
                     {
                         "Thickness": [0.3, "m"],
                         "SoilBulkDensity": [1500, "kg/m3"],
-                        "SoilOrganicCarbon": [float(line[header["Corg_0"]]), "%"],
-                        "Clay": [float(line[header["Clay_0"]]) / 100.0, "m3/m3"],
-                        "Sand": [float(line[header["Sand_0"]]) / 100.0, "m3/m3"],
-                        "Silt": [float(line[header["Silt_0"]]) / 100.0, "m3/m3"],
+                        "SoilOrganicCarbon": [float(line[header["SOC"]]), "%"],
+                        "Clay": [float(line[header["CALY"]]) / 100.0, "m3/m3"],
+                        "Sand": [float(line[header["SAND"]]) / 100.0, "m3/m3"],
+                        "Silt": [float(line[header["SILT"]]) / 100.0, "m3/m3"],
                     },
                     {
                         "Thickness": [0.3, "m"],
                         "SoilBulkDensity": [1700, "kg/m3"],
-                        "SoilOrganicCarbon": [float(line[header["Corg_30"]]), "%"],
-                        "Clay": [float(line[header["Clay_30"]]) / 100.0, "m3/m3"],
-                        "Sand": [float(line[header["Sand_30"]]) / 100.0, "m3/m3"],
-                        "Silt": [float(line[header["Silt_30"]]) / 100.0, "m3/m3"],
+                        "SoilOrganicCarbon": [float(line[header["SOC"]]), "%"],
+                        "Clay": [float(line[header["CALY"]]) / 100.0, "m3/m3"],
+                        "Sand": [float(line[header["SAND"]]) / 100.0, "m3/m3"],
+                        "Silt": [float(line[header["SILT"]]) / 100.0, "m3/m3"],
                     },
                     {
                         "Thickness": [0.3, "m"],
                         "SoilBulkDensity": [1700, "kg/m3"],
-                        "SoilOrganicCarbon": [float(line[header["Corg_60"]]), "%"],
-                        "Clay": [float(line[header["Clay_60"]]) / 100.0, "m3/m3"],
-                        "Sand": [float(line[header["Sand_60"]]) / 100.0, "m3/m3"],
-                        "Silt": [float(line[header["Silt_60"]]) / 100.0, "m3/m3"],
+                        "SoilOrganicCarbon": [float(line[header["SOC"]]), "%"],
+                        "Clay": [float(line[header["CALY"]]) / 100.0, "m3/m3"],
+                        "Sand": [float(line[header["SAND"]]) / 100.0, "m3/m3"],
+                        "Silt": [float(line[header["SILT"]]) / 100.0, "m3/m3"],
                     }
                 ]
                 csv_soil_profiles[(r, h)] = profile
