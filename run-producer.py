@@ -39,7 +39,7 @@ PATHS = {
     # adjust the local path to your environment
     "re-local-remote": {
         # "include-file-base-path": "/home/berg/GitHub/monica-parameters/", # path to monica-parameters
-        "path-to-climate-dir": "/beegfs/common/data/climate/",
+        "path-to-climate-dir": "data/germany/Weather_WL",
         # mounted path to archive or hard drive with climate data
         "monica-path-to-climate-dir": "/monica_data/climate-data/",
         # mounted path to archive accessable by monica executable
@@ -117,8 +117,8 @@ def run_producer(server=None, port=None):
     socket = context.socket(zmq.PUSH)  # pylint: disable=no-member
 
     config = {
-        "mode": "mbm-local-remote",
-        "server-port": port if port else "6666",
+        "mode": "re-local-remote",
+        "server-port": port if port else "6669",
         "server": server if server else "login01.cluster.zalf.de",
         "start-row": "0",
         "end-row": "-1",
@@ -181,6 +181,7 @@ def run_producer(server=None, port=None):
     csv_soils_crs = CRS.from_epsg(25833)
     soil_crs_to_x_transformers[csv_soils_crs] = Transformer.from_crs(soil_crs, csv_soils_crs, always_xy=True)
     if config["use_csv_soils"]:
+        csv_profile_plotno = {}
         with open(f"{paths['path-to-data-dir']}/germany/Soil_data_Hermes.csv") as file:
             dialect = csv.Sniffer().sniff(file.read(), delimiters=';,\t')
             file.seek(0)
@@ -190,8 +191,8 @@ def run_producer(server=None, port=None):
             points = []
             values = []
             for line in reader:
-                r = int(line[header["Easting"]])
-                h = int(line[header["Northing"]])
+                r = float(line[header["Easting"]])
+                h = float(line[header["Northing"]])
                 points.append([r, h])
                 values.append((r, h))
                 profile = [
@@ -199,7 +200,7 @@ def run_producer(server=None, port=None):
                         "Thickness": [0.3, "m"],
                         "SoilBulkDensity": [1500, "kg/m3"],
                         "SoilOrganicCarbon": [float(line[header["SOC"]]), "%"],
-                        "Clay": [float(line[header["CALY"]]) / 100.0, "m3/m3"],
+                        "Clay": [float(line[header["CLAY"]]) / 100.0, "m3/m3"],
                         "Sand": [float(line[header["SAND"]]) / 100.0, "m3/m3"],
                         "Silt": [float(line[header["SILT"]]) / 100.0, "m3/m3"],
                     },
@@ -207,7 +208,7 @@ def run_producer(server=None, port=None):
                         "Thickness": [0.3, "m"],
                         "SoilBulkDensity": [1700, "kg/m3"],
                         "SoilOrganicCarbon": [float(line[header["SOC"]]), "%"],
-                        "Clay": [float(line[header["CALY"]]) / 100.0, "m3/m3"],
+                        "Clay": [float(line[header["CLAY"]]) / 100.0, "m3/m3"],
                         "Sand": [float(line[header["SAND"]]) / 100.0, "m3/m3"],
                         "Silt": [float(line[header["SILT"]]) / 100.0, "m3/m3"],
                     },
@@ -215,13 +216,22 @@ def run_producer(server=None, port=None):
                         "Thickness": [0.3, "m"],
                         "SoilBulkDensity": [1700, "kg/m3"],
                         "SoilOrganicCarbon": [float(line[header["SOC"]]), "%"],
-                        "Clay": [float(line[header["CALY"]]) / 100.0, "m3/m3"],
+                        "Clay": [float(line[header["CLAY"]]) / 100.0, "m3/m3"],
                         "Sand": [float(line[header["SAND"]]) / 100.0, "m3/m3"],
                         "Silt": [float(line[header["SILT"]]) / 100.0, "m3/m3"],
                     }
                 ]
                 csv_soil_profiles[(r, h)] = profile
+                plot_no = int(line[header["Field_Profile_number"]])
+                csv_profile_plotno[(r, h)] = plot_no
             csv_soil_interpolate = NearestNDInterpolator(np.array(points), np.array(values))
+
+        # Read Meta.csv to build a mapping from Plot No (Field_Profile_number) to Weather_file_no
+        plot_to_weather = {}
+        with open(f"{paths['path-to-data-dir']}germany/Weather_WL/Meta.csv", newline="") as mf:
+            meta_reader = csv.DictReader(mf)
+            for row in meta_reader:
+                plot_to_weather[int(row["Plot no"])] = row["Weather_file_no"]
 
     # height data for germany
     path_to_dem_grid = paths["path-to-data-dir"] + DATA_GRID_HEIGHT
@@ -320,11 +330,11 @@ def run_producer(server=None, port=None):
         cdict = {}
         # path to latlon-to-rowcol.json
         # path = TEMPLATE_PATH_LATLON.format(path_to_climate_dir=paths["path-to-climate-dir"] + setup["climate_path_to_latlon_file"] + "/")
-        path = TEMPLATE_PATH_LATLON.format(
-            path_to_climate_dir=paths["path-to-climate-dir"] + setup["climate_path_to_latlon_file"] + "/")
-        climate_data_interpolator = ragm.create_climate_geoGrid_interpolator_from_json_file(path, wgs84_crs,
-                                                                                               soil_crs, cdict)
-        print("created climate_data to gk5 interpolator: ", path)
+        # path = TEMPLATE_PATH_LATLON.format(
+        #     path_to_climate_dir=paths["path-to-climate-dir"] + setup["climate_path_to_latlon_file"] + "/")
+        # climate_data_interpolator = ragm.create_climate_geoGrid_interpolator_from_json_file(path, wgs84_crs,
+        #                                                                                        soil_crs, cdict)
+        # print("created climate_data to gk5 interpolator: ", path)
 
         # read template sim.json 
         with open(setup.get("sim.json", config["sim.json"])) as _:
@@ -390,7 +400,7 @@ def run_producer(server=None, port=None):
                 sh = yllcorner + (scellsize / 2) + (srows - srow - 1) * scellsize
                 sr = xllcorner + (scellsize / 2) + scol * scellsize
                 # inter = crow/ccol encoded into integer
-                crow, ccol = map(int, climate_data_interpolator(sr, sh))
+                # crow, ccol = map(int, climate_data_interpolator(sr, sh))
 
                 tcoords = {}
 
@@ -410,7 +420,7 @@ def run_producer(server=None, port=None):
                     env_template["customId"] = {
                         "setup_id": setup_id,
                         "srow": srow, "scol": scol,
-                        "crow": int(crow), "ccol": int(ccol),
+                        # "crow": int(crow), "ccol": int(ccol),
                         "soil_id": soil_id,
                         "env_id": sent_env_count,
                         "nodata": True,
@@ -436,7 +446,7 @@ def run_producer(server=None, port=None):
                     env_template["customId"] = {
                         "setup_id": setup_id,
                         "srow": srow, "scol": scol,
-                        "crow": int(crow), "ccol": int(ccol),
+                        # "crow": int(crow), "ccol": int(ccol),
                         "soil_id": soil_id,
                         "env_id": sent_env_count,
                         "nodata": True,
@@ -479,8 +489,11 @@ def run_producer(server=None, port=None):
                     env_template["params"]["siteParameters"]["slope"] = slope / 100.0
 
                 if setup["latitude"]:
-                    clat, _ = cdict[(crow, ccol)]
-                    env_template["params"]["siteParameters"]["Latitude"] = clat
+                    # clat, _ = cdict[(crow, ccol)]
+                    # env_template["params"]["siteParameters"]["Latitude"] = clat
+
+                    slat, slon = soil_crs_to_x_transformers[wgs84_crs].transform(sr, sh)
+                    env_template["params"]["siteParameters"]["Latitude"] = slat
 
                 if setup["CO2"]:
                     env_template["params"]["userEnvironmentParameters"]["AtmosphericCO2"] = float(setup["CO2"])
@@ -518,28 +531,35 @@ def run_producer(server=None, port=None):
 
                 env_template["csvViaHeaderOptions"] = sim_json["climate.csv-options"]
 
-                subpath_to_csv = TEMPLATE_PATH_CLIMATE_CSV.format(gcm=gcm, rcm=rcm, scenario=scenario, ensmem=ensmem,
-                                                                  version=version, crow=str(crow), ccol=str(ccol))
-                for _ in range(4):
-                    subpath_to_csv = subpath_to_csv.replace("//", "/")
-                env_template["pathToClimateCSV"] = [
-                    paths["monica-path-to-climate-dir"] + setup["climate_path_to_csvs"] + "/" + subpath_to_csv]
-                if setup["incl_hist"]:
-                    hist_subpath_to_csv = TEMPLATE_PATH_CLIMATE_CSV.format(gcm=gcm, rcm=rcm, scenario="historical",
-                                                                           ensmem=ensmem, version=version,
-                                                                           crow=str(crow), ccol=str(ccol))
-                    for _ in range(4):
-                        hist_subpath_to_csv = hist_subpath_to_csv.replace("//", "/")
-                    env_template["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
-                        "climate_path_to_csvs"] + "/" + hist_subpath_to_csv)
+                # subpath_to_csv = TEMPLATE_PATH_CLIMATE_CSV.format(gcm=gcm, rcm=rcm, scenario=scenario, ensmem=ensmem,
+                #                                                   version=version, crow=str(crow), ccol=str(ccol))
+                # for _ in range(4):
+                #     subpath_to_csv = subpath_to_csv.replace("//", "/")
+                # env_template["pathToClimateCSV"] = [
+                #     paths["monica-path-to-climate-dir"] + setup["climate_path_to_csvs"] + "/" + subpath_to_csv]
+                # if setup["incl_hist"]:
+                #     hist_subpath_to_csv = TEMPLATE_PATH_CLIMATE_CSV.format(gcm=gcm, rcm=rcm, scenario="historical",
+                #                                                            ensmem=ensmem, version=version,
+                #                                                            crow=str(crow), ccol=str(ccol))
+                #     for _ in range(4):
+                #         hist_subpath_to_csv = hist_subpath_to_csv.replace("//", "/")
+                #     env_template["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
+                #         "climate_path_to_csvs"] + "/" + hist_subpath_to_csv)
+
+                # Determine which weather file to use for the current soil cell
+                plot_no = csv_profile_plotno.get((csvp_r, csvp_h)) if config["use_csv_soils"] else None
+                weather_base = plot_to_weather.get(plot_no) if plot_no is not None else None
+                env_template["pathToClimateCSV"] = [paths["monica-path-to-climate-dir"] + "/" +
+                                                    f"suren_WL/daily_mean_RES1_C181R0.csv/{weather_base}.csv"]
+
                 print("pathToClimateCSV:", env_template["pathToClimateCSV"])
-                if DEBUG_WRITE_CLIMATE:
-                    listOfClimateFiles.add(subpath_to_csv)
+                # if DEBUG_WRITE_CLIMATE:
+                #     listOfClimateFiles.add(subpath_to_csv)
 
                 env_template["customId"] = {
                     "setup_id": setup_id,
                     "srow": srow, "scol": scol,
-                    "crow": int(crow), "ccol": int(ccol),
+                    # "crow": int(crow), "ccol": int(ccol),
                     "soil_id": soil_id,
                     "env_id": sent_env_count,
                     "nodata": False
