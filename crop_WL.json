@@ -252,7 +252,7 @@
 		}]
 	},
 
-	"cropRotation": ["ref", "cropRotationTemplates", "WW_sfix_hauto"],
+	"cropRotation": ["ref", "cropRotationTemplates", "WW"],
 	
 	"CropParameters": {
 		"=": ["include-from-file", "general/crop.json"],
