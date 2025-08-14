@@ -83,7 +83,7 @@ PATHS = {
 # DATA_GRID_CROPS = "germany/MOLLLL-crop-wr_100_25832_etrs89-utm32n.asc"
 
 DATA_SOIL_DB = "germany/buek200.sqlite"
-DATA_GRID_HEIGHT = "germany/Hermes-dem-wr_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/Hermes-dem-wr_5_25832_etrs89-utm32n.asc"
 DATA_GRID_SLOPE = "germany/Hermes-slope-wr_100_25832_etrs89-utm32n.asc"
 DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 DATA_GRID_SOIL = "germany/Hermes-buek-wr_100_25832_etrs89-utm32n.asc"
