@@ -206,7 +206,7 @@ def run_producer(server=None, port=None):
                     },
                     {
                         "Thickness": [0.3, "m"],
-                        "SoilBulkDensity": [1700, "kg/m3"],
+                        "SoilBulkDensity": [1500, "kg/m3"],
                         "SoilOrganicCarbon": [float(line[header["Corg_30"]]), "%"],
                         "Clay": [float(line[header["Clay_30"]]) / 100.0, "m3/m3"],
                         "Sand": [float(line[header["Sand_30"]]) / 100.0, "m3/m3"],
