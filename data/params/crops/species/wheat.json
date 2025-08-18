@@ -66,7 +66,7 @@
   "PlantDensity": 220,
   "RootDistributionParam":0.002787,
   "RootFormFactor":3,
-  "RootGrowthLag":-30,
+  "RootGrowthLag":0,
   "RootPenetrationRate":0.0009,
   "SamplingDepth":0.9,
   
@@ -89,6 +89,6 @@
     true
   ],
   "TargetN30":120,
-  "TargetNSamplingDepth":230,
+  "TargetNSamplingDepth":120,
   "type":"SpeciesParameters"
 }

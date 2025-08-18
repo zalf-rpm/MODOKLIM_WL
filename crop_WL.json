@@ -10,7 +10,7 @@
 			"residueParams": ["include-from-file", "crops/residues/wheat.json"]
 		},
 		"SW_dwd": {
-			"is-winter-crop": true,
+			"is-winter-crop": false,
 			"cropParams": {
 				"species": ["include-from-file", "crops/species/wheat.json"],
 				"cultivar": ["include-from-file", "crops/cultivars/spring-wheat.json"]
@@ -18,7 +18,7 @@
 			"residueParams": ["include-from-file", "crops/residues/wheat.json"]
 		},
 		"SM_dwd": {
-			"is-winter-crop": true,
+			"is-winter-crop": false,
 			"cropParams": {
 				"species": ["include-from-file", "crops/species/maize.json"],
 				"cultivar": ["include-from-file", "crops/cultivars/grain-maize_bs.json"]
@@ -26,7 +26,7 @@
 			"residueParams": ["include-from-file", "crops/residues/maize.json"]
 		},
 		"SU_dwd": {
-			"is-winter-crop": true,
+			"is-winter-crop": false,
 			"cropParams": {
 				"species": ["include-from-file", "crops/species/sugar-beet.json"],
 				"cultivar": ["include-from-file", "crops/cultivars/sugar-beet_bs_dwd_pheno.json"]
@@ -34,7 +34,7 @@
 			"residueParams": ["include-from-file", "crops/residues/beet.json"]
 		},
 		"PO": {
-			"is-winter-crop": true,
+			"is-winter-crop": false,
 			"cropParams": {
 				"species": ["include-from-file", "crops/species/potato.json"],
 				"cultivar": ["include-from-file", "crops/cultivars/moderately-early-potato.json"]
@@ -90,7 +90,7 @@
 					"type": "OrganicFertilization",
 					"days": 1,
 					"after": "Harvest",
-					"amount": [15000, "kg N"],
+					"amount": [15000, "kg"],
 					"parameters": ["include-from-file", "organic-fertilisers/CAM.json"],
 					"incorporation": true
 				}
