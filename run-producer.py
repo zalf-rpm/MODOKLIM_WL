@@ -126,7 +126,7 @@ def run_producer(server=None, port=None):
         "sim.json": "sim_WL.json",
         "crop.json": "crop_WL.json",
         "site.json": "site_WL.json",
-        "setups-file": "sim_setups_SG_SP.csv",
+        "setups-file": "sim_setups_SG.csv",
         "run-setups": "[1]",
         "use_csv_soils": True,
     }
