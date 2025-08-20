@@ -2,50 +2,20 @@
   "SiteParameters": {
     "Latitude": 52.80939865112305,
     "Slope": 0,
-    "HeightNN": [0, "m"],
+    "HeightNN": [0 , "m"],
     "NDeposition": 30,
-
-    "SoilProfileParameters": [
-      {
-        "LayerThickness": [0.30, "m"],
-        "Sand": [89.7, "%"],
-        "Silt": [7.39, "%"],
-        "Clay": [2.90, "%"],
-        "BulkDensity": [1.50, "g cm-3"],
-        "OrganicCarbon": [1.09, "%"],
-        "SaturatedHydraulicConductivity": [1.0e-5, "m s-1"]  
-      },
-      {
-        "LayerThickness": [0.30, "m"],
-        "Sand": [73.78, "%"],
-        "Silt": [22.73, "%"],
-        "Clay": [3.49, "%"],
-        "BulkDensity": [1.70, "g cm-3"],
-        "OrganicCarbon": [0.96, "%"],
-        "SaturatedHydraulicConductivity": [1.0e-7, "m s-1"]   
-      },
-      {
-        "LayerThickness": [0.30, "m"],
-        "Sand": [64.98, "%"],
-        "Silt": [22.02, "%"],
-        "Clay": [13.00, "%"],
-        "BulkDensity": [1.70, "g cm-3"],
-        "OrganicCarbon": [0.24, "%"],
-        "SaturatedHydraulicConductivity": [5.0e-6, "m s-1"]
-      }
-    ]
+		
+    "SoilProfileParameters": []
   },
-
-  "EnvironmentParameters": {
+	
+  "SoilTemperatureParameters": ["include-from-file", "general/soil-temperature.json"],
+	"EnvironmentParameters": {
     "=": ["include-from-file", "general/environment.json"],
     "LeachingDepth": 2.0,
     "WindSpeedHeight": 2.5,
-
     "UseGroundwaterModel": true,
-    "GroundwaterLevel": [0.80, "m"]      
+    "GroundwaterLevel": [0.80, "m"]  
   },
-
-  "SoilTemperatureParameters": ["include-from-file", "general/soil-temperature.json"],
   "SoilOrganicParameters": ["include-from-file", "general/soil-organic.json"],
   "SoilTransportParameters": ["include-from-file", "general/soil-transport.json"],
   "SoilMoistureParameters": ["include-from-file", "general/soil-moisture.json"]
