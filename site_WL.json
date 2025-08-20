@@ -17,8 +17,8 @@
       },
       {
         "LayerThickness": [0.30, "m"],
-        "Sand": [83.78, "%"],
-        "Silt": [12.73, "%"],
+        "Sand": [73.78, "%"],
+        "Silt": [22.73, "%"],
         "Clay": [3.49, "%"],
         "BulkDensity": [1.70, "g cm-3"],
         "OrganicCarbon": [0.96, "%"],
@@ -26,9 +26,9 @@
       },
       {
         "LayerThickness": [0.30, "m"],
-        "Sand": [84.98, "%"],
-        "Silt": [12.02, "%"],
-        "Clay": [3.00, "%"],
+        "Sand": [64.98, "%"],
+        "Silt": [22.02, "%"],
+        "Clay": [13.00, "%"],
         "BulkDensity": [1.70, "g cm-3"],
         "OrganicCarbon": [0.24, "%"],
         "SaturatedHydraulicConductivity": [5.0e-6, "m s-1"]
