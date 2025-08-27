@@ -95,9 +95,9 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
     # }
 
     output_grids = {
-        "TimeUnderAnoxia": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
-        # "OxygenDeficit": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3}
-        
+        # "TimeUnderAnoxia": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
+        "OxygenDeficit": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3},
+        "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 3}
     }
 
 
