@@ -61,7 +61,7 @@ def create_output(msg):
     for data in msg.get("data", []):
         results = data.get("results", [])
 
-        is_daily_section = data.get("origSpec", "") == '"daily"'
+        is_daily_section = data.get("origSpec", "") == '"yearly"'
 
         for vals in results:
             if "CM-count" in vals:
