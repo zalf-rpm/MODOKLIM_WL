@@ -57,7 +57,7 @@
 					"type": "NDemandFertilization",
 					"days": 60,
 					"after": "Sowing",
-					"N-demand": [40.0, "kg"],
+					"N-demand": [4.0, "kg"],
 					"depth": [0.3, "m"],
 					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
 				},
@@ -65,7 +65,7 @@
 					"type": "NDemandFertilization",
 					"days": 120,
 					"after": "Sowing",
-					"N-demand": [80.0, "kg"],
+					"N-demand": [8.0, "kg"],
 					"depth": [0.9, "m"],
 					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
 				},
@@ -73,7 +73,7 @@
 					"type": "NDemandFertilization",
 					"days": 150,
 					"after": "Sowing",
-					"N-demand": [40.0, "kg"],
+					"N-demand": [4.0, "kg"],
 					"depth": [0.9, "m"],
 					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
 				},
@@ -90,7 +90,7 @@
 					"type": "OrganicFertilization",
 					"days": 1,
 					"after": "Harvest",
-					"amount": [15000, "kg"],
+					"amount": [15, "kg"],
 					"parameters": ["include-from-file", "organic-fertilisers/CAM.json"],
 					"incorporation": true
 				}
