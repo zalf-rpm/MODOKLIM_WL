@@ -56,7 +56,7 @@
 			],
 			"crop", [
 				"CM-count",
-				"Year",
+				["Year", "LAST"],
 				"Crop",
 				["Yield", "LAST"]
 			]
