@@ -38,7 +38,7 @@
 		"obj-outputs?": true,
 
 		"events": [
-			"yearly", [
+			"daily", [
 				"Year",
 				"Date",
 				"Crop",
@@ -53,6 +53,11 @@
 				["Mois|SWC", [1, 1]],
 				"TimeUnderAnoxia",
 				"OxRed|OxygenDeficit"
+			],
+			"crop", [
+				"Year",
+				"Crop",
+				["Yield", "LAST"]
 			]
 		]
 	},
