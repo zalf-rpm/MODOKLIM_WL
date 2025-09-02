@@ -55,6 +55,7 @@
 				"OxRed|OxygenDeficit"
 			],
 			"crop", [
+				"CM-count",
 				"Year",
 				"Crop",
 				["Yield", "LAST"]

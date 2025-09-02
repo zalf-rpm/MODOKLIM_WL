@@ -65,7 +65,8 @@ def create_output(msg):
 
         for vals in results:
             if "CM-count" in vals and "Year" in vals:
-                cm_count_to_vals[vals["Year"]].update(vals)
+                print(vals)
+                cm_count_to_vals[str(vals["Year"])].update(vals)
             elif is_daily_section and "Date" in vals:
                 vals2 = {}
                 for key, val in vals.items():
