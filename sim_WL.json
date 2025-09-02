@@ -38,7 +38,7 @@
 		"obj-outputs?": true,
 
 		"events": [
-			"daily", [
+			"yearly", [
 				"Year",
 				"Date",
 				"Crop",
