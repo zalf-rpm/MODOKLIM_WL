@@ -64,8 +64,8 @@ def create_output(msg):
         is_daily_section = data.get("origSpec", "") == '"daily"'
 
         for vals in results:
-            if "CM-count" in vals and "Year" in vals:
-                cm_count_to_vals[str(vals["Year"])].update(vals)
+            if "CM-count" in vals:
+                cm_count_to_vals[vals["CM-count"]].update(vals)
             elif is_daily_section and "Date" in vals:
                 vals2 = {}
                 for key, val in vals.items():
