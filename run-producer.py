@@ -233,6 +233,15 @@ def run_producer(server=None, port=None):
             for row in meta_reader:
                 plot_to_weather[int(row["Plot no"])] = row["Weather_file_no"]
 
+
+        plot_to_weather = {}
+        with open(f"{paths['path-to-data-dir']}/germany/Weather_WL_ALL/Meta_ALL.csv", newline="") as mf:
+            meta_reader = csv.DictReader(mf)
+            for row in meta_reader:
+                plot_to_weather[int(row["Plot no"])] = row["Weather_file_no"]
+
+
+
     # height data for germany
     path_to_dem_grid = paths["path-to-data-dir"] + DATA_GRID_HEIGHT
     dem_epsg_code = int(path_to_dem_grid.split("/")[-1].split("_")[2])
