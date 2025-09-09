@@ -458,6 +458,7 @@ def run_producer(server=None, port=None):
                 env_template["customId"] = {
                     "setup_id": setup_id,
                     "plot_no": plot_no,
+                    "srow": srow, "scol": scol,
                     "nodata": True,
                     "env_id": sent_env_count
                 }
@@ -476,6 +477,7 @@ def run_producer(server=None, port=None):
                     env_template["customId"] = {
                         "setup_id": setup_id,
                         "plot_no": plot_no,
+                        "srow": srow, "scol": scol,
                         "nodata": True,
                         "env_id": sent_env_count
                     }
@@ -557,6 +559,7 @@ def run_producer(server=None, port=None):
                 env_template["customId"] = {
                     "setup_id": setup_id,
                     "plot_no": plot_no,
+                    "srow": srow, "scol": scol,
                     "nodata": True,
                     "env_id": sent_env_count
                 }
@@ -573,6 +576,7 @@ def run_producer(server=None, port=None):
                 env_template["customId"] = {
                     "setup_id": setup_id,
                     "plot_no": plot_no,
+                    "srow": srow, "scol": scol,
                     "nodata": True,
                     "env_id": sent_env_count
                 }
