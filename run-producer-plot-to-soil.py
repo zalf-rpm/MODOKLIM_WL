@@ -445,238 +445,186 @@ def run_producer(server=None, port=None):
 
         csv_to_soil = Transformer.from_crs(csv_soils_crs, soil_crs, always_xy=True)
 
-        all_plot_nos = sorted(set(plots.keys()) | set(overlay.keys()))
-        for plot_no in all_plot_nos:
+        cell_to_plot = {}
 
-            # Choose weather mapping
-            if plot_no >= 91:
-                weather_base = plot_to_weather_all.get(plot_no) or plot_to_weather.get(plot_no)
-            else:
-                weather_base = plot_to_weather.get(plot_no)
-
-            if not weather_base:
-                env_template["customId"] = {
-                    "setup_id": setup_id,
-                    "plot_no": plot_no,
-                    "srow": srow, "scol": scol,
-                    "nodata": True,
-                    "env_id": sent_env_count
-                }
-                if not DEBUG_DONOT_SEND:
-                    socket.send_json(env_template);
-                    sent_env_count += 1
-                continue
-
-            # For plots 91 onwards, use DB soil
-            if plot_no >= 91 and plot_no in overlay:
-                ov = overlay[plot_no]
-
-                sr, sh = ov["sr"], ov["sh"]
-                rc = xy_to_rowcol(sr, sh, soil_metadata)
-                if rc is None:
-                    env_template["customId"] = {
-                        "setup_id": setup_id,
-                        "plot_no": plot_no,
-                        "srow": srow, "scol": scol,
-                        "nodata": True,
-                        "env_id": sent_env_count
-                    }
-                    if not DEBUG_DONOT_SEND:
-                        socket.send_json(env_template);
-                        sent_env_count += 1
-                    continue
-
-                srow, scol = rc
-                nn = find_nearest_valid_cell(srow, scol, setup, max_radius=5) or (srow, scol)
-                srow, scol = nn
-
-                # DB soil profile from Soil id
-                soil_id = int(ov["soil_id"])
-                if soil_id in soil_id_cache:
-                    soil_profile = soil_id_cache[soil_id]
-                else:
-                    soil_profile = soil_io.soil_parameters(soil_db_con, soil_id)
-                    soil_id_cache[soil_id] = soil_profile
-
-                if not soil_profile:
-                    env_template["customId"] = {
-                        "setup_id": setup_id,
-                        "plot_no": plot_no,
-                        "srow": srow, "scol": scol,
-                        "soil_id": soil_id,
-                        "nodata": True,
-                        "env_id": sent_env_count
-                    }
-                    if not DEBUG_DONOT_SEND:
-                        socket.send_json(env_template);
-                        sent_env_count += 1
-                    continue
-
-                # Site parameters
-                csr, csh = cell_center_xy(scol, srow, soil_metadata)
-                env_template["params"]["siteParameters"]["SoilProfileParameters"] = soil_profile
-
-                # Use DEM values from dem_soil_overlay.csv
-                if setup["elevation"]:
-                    env_template["params"]["siteParameters"]["HeightNN"] = float(ov["dem"])
-
-                # Slope
-                if setup["slope"]:
-                    slr, slh = soil_crs_to_x_transformers[slope_crs].transform(csr, csh)
-                    slope_val = slope_interpolate(slr, slh)
-                    env_template["params"]["siteParameters"]["Slope"] = float(slope_val) / 100.0
-
-                if setup["latitude"]:
-                    slat, slon = soil_crs_to_x_transformers[wgs84_crs].transform(csr, csh)
-                    env_template["params"]["siteParameters"]["Latitude"] = slat
-
-                # Climate path
-                env_template["pathToClimateCSV"] = [
-                    paths["monica-path-to-climate-dir"] + "/" +
-                    f"suren_WL/Weather_ALL/{weather_base}.csv"
-                ]
-
-                env_template["customId"] = {
-                    "setup_id": setup_id,
-                    "plot_no": plot_no,
-                    "srow": srow, "scol": scol,
-                    "soil_id": soil_id,
-                    "env_id": sent_env_count,
-                    "nodata": False
-                }
-
-                if not DEBUG_DONOT_SEND:
-                    socket.send_json(env_template)
-                    print("sent env ", sent_env_count, " customId: ", env_template["customId"])
-                    sent_env_count += 1
-
-                    # with open(f"env/env_template_plot-{plot_no}.json", "w") as _:
-                    #     json.dump(env_template, _, indent=4)
-                continue
-
-            # Plots 1 to 90
-            if plot_no not in plots:
-                env_template["customId"] = {
-                    "setup_id": setup_id,
-                    "plot_no": plot_no,
-                    "srow": srow, "scol": scol,
-                    "nodata": True,
-                    "env_id": sent_env_count
-                }
-                if not DEBUG_DONOT_SEND:
-                    socket.send_json(env_template);
-                    sent_env_count += 1
-                continue
-
-            pdata = plots[plot_no]
+        for plot_no, pdata in plots.items():
             pr, ph = pdata["pr"], pdata["ph"]
             sr, sh = csv_to_soil.transform(pr, ph)
             rc = xy_to_rowcol(sr, sh, soil_metadata)
-            if rc is None:
-                env_template["customId"] = {
-                    "setup_id": setup_id,
-                    "plot_no": plot_no,
-                    "srow": srow, "scol": scol,
-                    "nodata": True,
-                    "env_id": sent_env_count
-                }
-                if not DEBUG_DONOT_SEND:
-                    socket.send_json(env_template);
-                    sent_env_count += 1
-                continue
+            if rc:
+                cell_to_plot[rc] = plot_no
 
-            srow, scol = rc
-            nn = find_nearest_valid_cell(srow, scol, setup, max_radius=20)
-            if nn is None:
-                env_template["customId"] = {
-                    "setup_id": setup_id,
-                    "plot_no": plot_no,
-                    "srow": srow, "scol": scol,
-                    "nodata": True,
-                    "env_id": sent_env_count
-                }
-                if not DEBUG_DONOT_SEND:
-                    socket.send_json(env_template);
-                    sent_env_count += 1
-                continue
+        for plot_no, ov in overlay.items():
+            sr, sh = ov["sr"], ov["sh"]
+            rc = xy_to_rowcol(sr, sh, soil_metadata)
+            if rc:
+                cell_to_plot[rc] = plot_no
 
-            srow, scol = nn
-            soil_id = int(soil_grid[srow, scol])
+        for srow in range(srows):
+            for scol in range(scols):
 
-            soil_profile = pdata["profile"]
-            if not soil_profile:
-                env_template["customId"] = {
-                    "setup_id": setup_id,
-                    "plot_no": plot_no,
-                    "srow": srow, "scol": scol,
-                    "soil_id": soil_id,
-                    "nodata": True,
-                    "env_id": sent_env_count
-                }
-                if not DEBUG_DONOT_SEND:
-                    socket.send_json(env_template)
-                    sent_env_count += 1
-                continue
+                if (srow, scol) not in cell_to_plot:
+                    env_template["customId"] = {
+                        "setup_id": setup_id,
+                        "srow": srow, "scol": scol,
+                        "nodata": True,
+                        "env_id": sent_env_count
+                    }
+                    if not DEBUG_DONOT_SEND:
+                        socket.send_json(env_template)
+                        sent_env_count += 1
+                    continue
 
-            csr, csh = cell_center_xy(scol, srow, soil_metadata)
+                plot_no = cell_to_plot[(srow, scol)]
 
-            if setup["elevation"]:
-                demr, demh = soil_crs_to_x_transformers[dem_crs].transform(csr, csh)
-                height_nn = dem_interpolate(demr, demh)
-                env_template["params"]["siteParameters"]["HeightNN"] = float(height_nn)
+                if plot_no >= 91 and plot_no in overlay:
+                    ov = overlay[plot_no]
+                    soil_id = int(ov["soil_id"])
+                    if soil_id in soil_id_cache:
+                        soil_profile = soil_id_cache[soil_id]
+                    else:
+                        soil_profile = soil_io.soil_parameters(soil_db_con, soil_id)
+                        soil_id_cache[soil_id] = soil_profile
 
-            if setup["slope"]:
-                slr, slh = soil_crs_to_x_transformers[slope_crs].transform(csr, csh)
-                slope_val = slope_interpolate(slr, slh)
-                env_template["params"]["siteParameters"]["Slope"] = float(slope_val) / 100.0
+                    if not soil_profile:
+                        env_template["customId"] = {
+                            "setup_id": setup_id,
+                            "srow": srow, "scol": scol,
+                            "soil_id": soil_id,
+                            "nodata": True,
+                            "env_id": sent_env_count
+                        }
+                        socket.send_json(env_template)
+                        sent_env_count += 1
+                        continue
 
-            if setup["latitude"]:
-                slat, slon = soil_crs_to_x_transformers[wgs84_crs].transform(csr, csh)
-                env_template["params"]["siteParameters"]["Latitude"] = slat
+                    # Site parameters
+                    csr, csh = cell_center_xy(scol, srow, soil_metadata)
+                    env_template["params"]["siteParameters"]["SoilProfileParameters"] = soil_profile
 
-            env_template["params"]["siteParameters"]["SoilProfileParameters"] = soil_profile
+                    # Use DEM values from dem_soil_overlay.csv
+                    if setup["elevation"]:
+                        env_template["params"]["siteParameters"]["HeightNN"] = float(ov["dem"])
 
-            env_template["pathToClimateCSV"] = [
-                paths["monica-path-to-climate-dir"] + "/" +
-                f"suren_WL/daily_mean_RES1_C181R0.csv/{weather_base}.csv"
-            ]
+                    # Slope
+                    if setup["slope"]:
+                        slr, slh = soil_crs_to_x_transformers[slope_crs].transform(csr, csh)
+                        slope_val = slope_interpolate(slr, slh)
+                        env_template["params"]["siteParameters"]["Slope"] = float(slope_val) / 100.0
 
-            env_template["customId"] = {
-                "setup_id": setup_id,
-                "plot_no": plot_no,
-                "srow": srow, "scol": scol,
-                "soil_id": soil_id,
-                "env_id": sent_env_count,
-                "nodata": False
-            }
+                    if setup["latitude"]:
+                        slat, slon = soil_crs_to_x_transformers[wgs84_crs].transform(csr, csh)
+                        env_template["params"]["siteParameters"]["Latitude"] = slat
 
-            if not DEBUG_DONOT_SEND:
-                socket.send_json(env_template)
-                print("sent env ", sent_env_count, " customId: ", env_template["customId"])
-                sent_env_count += 1
+                    # Climate path
+                    weather_base = plot_to_weather_all.get(plot_no) or plot_to_weather.get(plot_no)
+                    if weather_base:
+                        env_template["pathToClimateCSV"] = [
+                            paths["monica-path-to-climate-dir"] +
+                            f"/suren_WL/Weather_ALL/{weather_base}.csv"
+                        ]
+                        env_template["customId"] = {
+                            "setup_id": setup_id,
+                            "plot_no": plot_no,
+                            "srow": srow, "scol": scol,
+                            "soil_id": soil_id,
+                            "env_id": sent_env_count,
+                            "nodata": False
+                        }
+                        socket.send_json(env_template)
+                        sent_env_count += 1
+                    else:
+                        env_template["customId"] = {
+                            "setup_id": setup_id,
+                            "srow": srow, "scol": scol,
+                            "nodata": True,
+                            "env_id": sent_env_count
+                        }
+                        socket.send_json(env_template)
+                        sent_env_count += 1
 
-                # Save the sent env_template as a json file
-                # with open(f"env/env_template_plot-{plot_no}.json", "w") as _:
-                #     json.dump(env_template, _, indent=4)
+                # Plots 1 to 90
+                elif plot_no in plots:
+                    pdata = plots[plot_no]
+                    soil_profile = pdata["profile"]
 
-                # write debug output, as json file
-                if DEBUG_WRITE:
-                    debug_write_folder = paths["path-debug-write-folder"]
-                    if not os.path.exists(debug_write_folder):
-                        os.makedirs(debug_write_folder)
-                    if sent_env_count < DEBUG_ROWS:
+                    if not soil_profile:
+                        env_template["customId"] = {
+                            "setup_id": setup_id,
+                            "srow": srow, "scol": scol,
+                            "nodata": True,
+                            "env_id": sent_env_count
+                        }
+                        socket.send_json(env_template)
+                        sent_env_count += 1
+                        continue
 
-                        path_to_debug_file = debug_write_folder + "/row_" + str(sent_env_count - 1) + "_" + str(
-                            setup_id) + ".json"
+                    csr, csh = cell_center_xy(scol, srow, soil_metadata)
 
-                        if not os.path.isfile(path_to_debug_file):
-                            with open(path_to_debug_file, "w") as _:
-                                _.write(json.dumps(env_template))
-                        else:
-                            print("WARNING: Row ", (sent_env_count - 1), " already exists")
-            # print("unknown_soil_ids:", unknown_soil_ids)
+                    if setup["elevation"]:
+                        demr, demh = soil_crs_to_x_transformers[dem_crs].transform(csr, csh)
+                        height_nn = dem_interpolate(demr, demh)
+                        env_template["params"]["siteParameters"]["HeightNN"] = float(height_nn)
 
-            # print("crows/cols:", crows_cols)
+                    if setup["slope"]:
+                        slr, slh = soil_crs_to_x_transformers[slope_crs].transform(csr, csh)
+                        slope_val = slope_interpolate(slr, slh)
+                        env_template["params"]["siteParameters"]["Slope"] = float(slope_val) / 100.0
+
+                    if setup["latitude"]:
+                        slat, slon = soil_crs_to_x_transformers[wgs84_crs].transform(csr, csh)
+                        env_template["params"]["siteParameters"]["Latitude"] = slat
+
+                    env_template["params"]["siteParameters"]["SoilProfileParameters"] = soil_profile
+
+                    weather_base = plot_to_weather.get(plot_no)
+                    if weather_base:
+                        env_template["pathToClimateCSV"] = [
+                            paths["monica-path-to-climate-dir"] +
+                            f"/suren_WL/daily_mean_RES1_C181R0.csv/{weather_base}.csv"
+                        ]
+                        env_template["customId"] = {
+                            "setup_id": setup_id,
+                            "plot_no": plot_no,
+                            "srow": srow, "scol": scol,
+                            "soil_id": int(soil_grid[srow, scol]),
+                            "env_id": sent_env_count,
+                            "nodata": False
+                        }
+                        socket.send_json(env_template)
+                        sent_env_count += 1
+                    else:
+                        env_template["customId"] = {
+                            "setup_id": setup_id,
+                            "srow": srow, "scol": scol,
+                            "nodata": True,
+                            "env_id": sent_env_count
+                        }
+                        socket.send_json(env_template)
+                        sent_env_count += 1
+
+                        # Save the sent env_template as a json file
+                        # with open(f"env/env_template_plot-{plot_no}.json", "w") as _:
+                        #     json.dump(env_template, _, indent=4)
+
+                        # write debug output, as json file
+                        if DEBUG_WRITE:
+                            debug_write_folder = paths["path-debug-write-folder"]
+                            if not os.path.exists(debug_write_folder):
+                                os.makedirs(debug_write_folder)
+                            if sent_env_count < DEBUG_ROWS:
+
+                                path_to_debug_file = debug_write_folder + "/row_" + str(sent_env_count - 1) + "_" + str(
+                                    setup_id) + ".json"
+
+                                if not os.path.isfile(path_to_debug_file):
+                                    with open(path_to_debug_file, "w") as _:
+                                        _.write(json.dumps(env_template))
+                                else:
+                                    print("WARNING: Row ", (sent_env_count - 1), " already exists")
+                    # print("unknown_soil_ids:", unknown_soil_ids)
+
+                    # print("crows/cols:", crows_cols)
         # cs__.close()
         stop_setup_time = time.perf_counter()
         print("\nSetup ", sent_env_count, " envs took ", (stop_setup_time - start_setup_time), " seconds")
