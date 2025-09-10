@@ -116,4 +116,4 @@ os.makedirs(asc_output_path, exist_ok=True)
 # csv_to_asc(csv_output_dir, asc_output_path, soil_grid_path, mode="crop", variables=["Yield"])
 
 # For daily values
-csv_to_asc(csv_output_dir, asc_output_path, soil_grid_path, mode="daily", variables=["TimeUnderAnoxia"], target_date="2024-0-15")
+csv_to_asc(csv_output_dir, asc_output_path, soil_grid_path, mode="daily", variables=["TimeUnderAnoxia"])
