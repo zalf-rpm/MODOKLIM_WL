@@ -29,7 +29,7 @@ def csv_to_asc(csv_output_dir, asc_output_path, soil_grid_path, mode="crop", var
                 lines = f.readlines()
 
             if mode == "daily":
-                if not any(l.strip().startswith("Year,Date,Crop,Stage,Yield") for l in lines):
+                if not any(l.strip().startswith("Year,Date,Crop,Stage,TimeUnderAnoxia") for l in lines):
                     print(f"Skipping {csv_path}: no daily section")
                     continue
 
@@ -53,7 +53,7 @@ def csv_to_asc(csv_output_dir, asc_output_path, soil_grid_path, mode="crop", var
                     if target_date and date != target_date:
                         continue
 
-                    for var in (variables or ["Yield"]):
+                    for var in (variables or ["TimeUnderAnoxia"]):
                         try:
                             value = float(record[var]) if record[var] else -9999
                         except ValueError:
@@ -63,7 +63,7 @@ def csv_to_asc(csv_output_dir, asc_output_path, soil_grid_path, mode="crop", var
             elif mode == "crop":
                 crop_section_start = None
                 for i, line in enumerate(lines):
-                    if line.strip().startswith("CM-count,Year,Crop,Yield"):
+                    if line.strip().startswith("CM-count,Year,Crop,TimeUnderAnoxia"):
                         crop_section_start = i
                         break
 
@@ -84,7 +84,7 @@ def csv_to_asc(csv_output_dir, asc_output_path, soil_grid_path, mode="crop", var
                         continue
 
                     val = float(parts[3]) if parts[3] else -9999
-                    grids[(year, "Yield", crop)][row, col] = val
+                    grids[(year, "TimeUnderAnoxia", crop)][row, col] = val
 
     for key, grid in grids.items():
         if mode == "daily":
@@ -105,9 +105,9 @@ def csv_to_asc(csv_output_dir, asc_output_path, soil_grid_path, mode="crop", var
     print("ASC files created successfully.")
 
 
-csv_output_dir = r"D:\monica_modoklim_wl\out\out\1"
+csv_output_dir = r"C:\Users\giri\Documents\sentinel1data\Marlene_crop\1\MONICA\TUA"
 soil_grid_path = "data/germany/Hermes-buek-wr_100_25832_etrs89-utm32n.asc"
-asc_output_path = r"D:\monica_modoklim_wl\out\asc-out\1"
+asc_output_path = r"C:\Users\giri\Documents\sentinel1data\Marlene_crop\1\MONICA\TUA"
 
 # Make sure the output directory exists
 os.makedirs(asc_output_path, exist_ok=True)
@@ -116,4 +116,4 @@ os.makedirs(asc_output_path, exist_ok=True)
 # csv_to_asc(csv_output_dir, asc_output_path, soil_grid_path, mode="crop", variables=["Yield"])
 
 # For daily values
-# csv_to_asc(csv_output_dir, asc_output_path, soil_grid_path, mode="daily", variables=["SWC"], target_date="2024-04-15")
+csv_to_asc(csv_output_dir, asc_output_path, soil_grid_path, mode="daily", variables=["TimeUnderAnoxia"], target_date="2024-0-15")
