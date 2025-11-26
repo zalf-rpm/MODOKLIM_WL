@@ -73,21 +73,21 @@ PATHS = {
     }
 }
 
-# DATA_SOIL_DB = "germany/buek200.sqlite"
-# DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
-# DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
-# DATA_GRID_CROPS = "germany/MOLLLL-crop-wr_100_25832_etrs89-utm32n.asc"
-
 DATA_SOIL_DB = "germany/buek200.sqlite"
-DATA_GRID_HEIGHT = "germany/Hermes-dem-wr_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/Hermes-slope-wr_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/MOL-dem-wr_5_25832_etrs89-utm32n.asc.gz"
+DATA_GRID_SLOPE = "germany/MOL-dem-wr_5_25832_etrs89-utm32n.asc.gz"
 DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
-DATA_GRID_SOIL = "germany/Hermes-buek-wr_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/MOL-buek-wr_100_25832_etrs89-utm32n.asc"
 DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
-DATA_GRID_CROPS = "germany/Hermes-crop-wr_100_25832_etrs89-utm32n.asc"
+DATA_GRID_CROPS = "germany/MOLLLL-crop-wr_100_25832_etrs89-utm32n.asc"
+
+# DATA_SOIL_DB = "germany/buek200.sqlite"
+# DATA_GRID_HEIGHT = "germany/Hermes-dem-wr_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_SLOPE = "germany/Hermes-slope-wr_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
+# DATA_GRID_SOIL = "germany/Hermes-buek-wr_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
+# DATA_GRID_CROPS = "germany/Hermes-crop-wr_100_25832_etrs89-utm32n.asc"
 
 #TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv"
 TEMPLATE_PATH_CLIMATE_CSV = "{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz"
