@@ -231,8 +231,8 @@ def run_producer(server=None, port=None):
             for row in meta_reader_all:
                 plot_to_weather_all[int(row["Plot no"])] = row["Weather_file_no"]
 
-        overlay = {}
-        with open(f"{paths['path-to-data-dir']}/germany/dem_without_.csv") as of:
+        overlay = {} 
+        with open(f"{paths['path-to-data-dir']}/germany/dem_soil_ALL.csv") as of:   #dem_without_.csv used as main its without 90 points
             dialect = csv.Sniffer().sniff(of.read(), delimiters=';,\t')
             of.seek(0)
             reader = csv.DictReader(of, dialect=dialect)
