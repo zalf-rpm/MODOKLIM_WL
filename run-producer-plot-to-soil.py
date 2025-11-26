@@ -127,7 +127,7 @@ def run_producer(server=None, port=None):
         "site.json": "site_WL.json",
         "setups-file": "sim_setups_SG.csv",
         "run-setups": "[1]",
-        "use_csv_soils": True,
+        "use_csv_soils": False,
     }
 
     common.update_config(config, sys.argv, print_config=True, allow_new_keys=False)

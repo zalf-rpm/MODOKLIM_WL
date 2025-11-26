@@ -70,13 +70,14 @@ PATHS = {
         "monica-path-to-climate-dir": "/monica_data/climate-data/",
         # mounted path to archive accessable by monica executable
         "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
+        "path-to-data-dir": "./project/MODOKLIM_WL/",
         "path-debug-write-folder": "/out/debug-out/",
     }
 }
 
 # DATA_SOIL_DB = "germany/buek200.sqlite"
-# DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_HEIGHT = "MOL-dem-wr_5_25832_etrs89-utm32n.asc"
+# DATA_GRID_SLOPE = "MOL-slop-wr_5_25832_etrs89-utm32n.asc"
 # DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 # DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
 # DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
