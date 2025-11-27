@@ -553,7 +553,7 @@ def run_producer(server=None, port=None):
                 if plot_no and plot_no >= 91:
                     env_template["pathToClimateCSV"] = [
                         paths["monica-path-to-climate-dir"] +
-                        f"/suren_WL/Weather_ALL/{weather_base}.csv"
+                        f"/suren_WL/New_Weatherfile/{weather_base}.csv"
                     ]
                 else:
                     env_template["pathToClimateCSV"] = [
