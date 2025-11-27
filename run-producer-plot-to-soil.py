@@ -20,9 +20,9 @@ from zalfmas_common.model import monica_io
 from zalfmas_common.soil import soil_io
 from zalfmas_common import rect_ascii_grid_management as ragm
 
-# -----------------------------------------------------------------------------
-# PATH CONFIGURATION
-# -----------------------------------------------------------------------------
+# =============================================================================
+# FIXED PATHS — ONLY ONE MODE USED
+# =============================================================================
 
 PATHS = {
     "re-local-remote": {
@@ -32,6 +32,10 @@ PATHS = {
         "path-debug-write-folder": "./debug-out/"
     }
 }
+
+# =============================================================================
+# GRID FILES
+# =============================================================================
 
 DATA_SOIL_DB       = "germany/buek200.sqlite"
 DATA_GRID_HEIGHT   = "germany/Hermes-dem-wr_100_25832_etrs89-utm32n.asc"
@@ -43,15 +47,16 @@ DATA_GRID_CROPS    = "germany/Hermes-crop-wr_100_25832_etrs89-utm32n.asc"
 
 DEBUG_WRITE_CLIMATE = False
 
-# -----------------------------------------------------------------------------
+# =============================================================================
 # MAIN PRODUCER FUNCTION
-# -----------------------------------------------------------------------------
+# =============================================================================
 
 def run_producer(server=None, port=None):
 
     context = zmq.Context()
     socket = context.socket(zmq.PUSH)
 
+    # ✔ FIXED MODE — prevents KeyError
     config = {
         "mode": "re-local-remote",
         "server-port": port if port else "6669",
@@ -69,10 +74,14 @@ def run_producer(server=None, port=None):
     common.update_config(config, sys.argv, print_config=True, allow_new_keys=False)
 
     paths = PATHS[config["mode"]]
+
+    # Connect to soil DB
     soil_db_con = sqlite3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB)
+
+    # Connect to MONICA proxy
     socket.connect("tcp://" + config["server"] + ":" + str(config["server-port"]))
 
-    # Read simulation setups
+    # Read setups
     setups = Mrunlib.read_sim_setups(config["setups-file"])
 
     rs_ranges = config["run-setups"][1:-1].split(",")
@@ -84,12 +93,13 @@ def run_producer(server=None, port=None):
         else:
             run_setups.append(int(rs_r[0]))
 
+    # CRS
     soil_crs_to_x_transformers = {}
     wgs84_crs = CRS.from_epsg(4326)
 
-    # -----------------------------------------------------------------------------
+    # =============================================================================
     # LOAD SOIL GRID
-    # -----------------------------------------------------------------------------
+    # =============================================================================
 
     path_to_soil_grid = paths["path-to-data-dir"] + DATA_GRID_SOIL
     soil_epsg_code = int(path_to_soil_grid.split("/")[-1].split("_")[2])
@@ -100,9 +110,9 @@ def run_producer(server=None, port=None):
 
     soil_crs_to_x_transformers[wgs84_crs] = Transformer.from_crs(soil_crs, wgs84_crs)
 
-    # -----------------------------------------------------------------------------
-    # LOAD **ONLY** New_Meta.csv (ALL 3500 WEATHER POINTS)
-    # -----------------------------------------------------------------------------
+    # =============================================================================
+    # LOAD ONLY New_Meta.csv (ALL 3500 WEATHER POINTS)
+    # =============================================================================
 
     plot_to_weather = {}
     with open(f"{paths['path-to-data-dir']}germany/New_weatherfile/New_Meta.csv", newline="") as mf:
@@ -111,9 +121,9 @@ def run_producer(server=None, port=None):
             plot_no = int(row["Plot no"])
             plot_to_weather[plot_no] = row["Weather_file_no"]
 
-    # -----------------------------------------------------------------------------
-    # LOAD DEM, SLOPE, CROPS
-    # -----------------------------------------------------------------------------
+    # =============================================================================
+    # LOAD DEM / SLOPE / CROP GRID
+    # =============================================================================
 
     # DEM
     path_to_dem_grid = paths["path-to-data-dir"] + DATA_GRID_HEIGHT
@@ -127,7 +137,7 @@ def run_producer(server=None, port=None):
     slope_grid = np.loadtxt(path_to_slope_grid, dtype=float, skiprows=6)
     slope_interpolate = ragm.create_interpolator_from_rect_grid(slope_grid, slope_metadata)
 
-    # Crop mask
+    # Crop grid
     path_to_crop_grid = paths["path-to-data-dir"] + DATA_GRID_CROPS
     crop_metadata, _ = ragm.read_header(path_to_crop_grid)
     crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
@@ -136,15 +146,15 @@ def run_producer(server=None, port=None):
     sent_env_count = 0
     start_time = time.perf_counter()
 
-    # -----------------------------------------------------------------------------
-    # MAIN LOOP
-    # -----------------------------------------------------------------------------
+    # =============================================================================
+    # MAIN LOOP FOR ALL SETUPS
+    # =============================================================================
 
     for _, setup_id in enumerate(run_setups):
 
         setup = setups[setup_id]
 
-        # Load json templates
+        # Load template JSONs
         with open(setup.get("sim.json", config["sim.json"])) as f:
             sim_json = json.load(f)
         if setup["start_date"]:
@@ -179,6 +189,7 @@ def run_producer(server=None, port=None):
 
         soil_id_cache = {}
 
+        # Loop over grid
         for srow in range(srows):
 
             if srow < int(config["start-row"]):
@@ -190,7 +201,7 @@ def run_producer(server=None, port=None):
 
                 soil_id = int(soil_grid[srow, scol])
 
-                # nodata cell
+                # nodata
                 if soil_id == nodata_value:
                     env_template["customId"] = {
                         "setup_id": setup_id, "srow": srow, "scol": scol,
@@ -201,7 +212,7 @@ def run_producer(server=None, port=None):
                     sent_env_count += 1
                     continue
 
-                # crop mask test
+                # crop mask
                 sr = x0 + (scol + 0.5) * cellsize
                 sh = y0 + (srows - srow - 0.5) * cellsize
                 cropr, croph = soil_crs_to_x_transformers[crop_crs].transform(sr, sh)
@@ -225,11 +236,10 @@ def run_producer(server=None, port=None):
 
                 env_template["params"]["siteParameters"]["SoilProfileParameters"] = soil_profile
 
-                # WEATHER: soil_id == plot_no
+                # weather lookup using soil_id
                 weather_base = plot_to_weather.get(soil_id)
 
                 if not weather_base:
-                    # missing weather → skip
                     env_template["customId"] = {
                         "setup_id": setup_id, "srow": srow, "scol": scol,
                         "soil_id": soil_id, "env_id": sent_env_count,
@@ -259,12 +269,12 @@ def run_producer(server=None, port=None):
 
     stop_time = time.perf_counter()
 
+    # Optional debug write
     if DEBUG_WRITE_CLIMATE:
         debug_write_folder = paths["path-debug-write-folder"]
         if not os.path.exists(debug_write_folder):
             os.makedirs(debug_write_folder)
-        path_to_climate_summary = debug_write_folder + "/climate_file_list.csv"
-        with open(path_to_climate_summary, "w") as f:
+        with open(debug_write_folder + "/climate_file_list.csv", "w") as f:
             f.write("\n".join(listOfClimateFiles))
 
     try:
@@ -274,9 +284,9 @@ def run_producer(server=None, port=None):
         raise
 
 
-# -----------------------------------------------------------------------------
-# RUN MAIN
-# -----------------------------------------------------------------------------
+# =============================================================================
+# MAIN ENTRY
+# =============================================================================
 
 if __name__ == "__main__":
     run_producer()
