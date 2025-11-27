@@ -220,13 +220,13 @@ def run_producer(server=None, port=None):
 
         # Read Meta to build a mapping from Plot No (Field_Profile_number) to Weather_file_no
         plot_to_weather = {}
-        with open(f"{paths['path-to-data-dir']}germany/Weather_WL/Meta.csv", newline="") as mf:
+        with open(f"{paths['path-to-data-dir']}germany/Weather_WL/Meta.csv", newline="") as mf:     #90 points
             meta_reader = csv.DictReader(mf)
             for row in meta_reader:
                 plot_to_weather[int(row["Plot no"])] = row["Weather_file_no"]
 
         plot_to_weather_all = {}
-        with open(f"{paths['path-to-data-dir']}germany/Weather_WL_ALL/Meta_ALL.csv", newline="") as mf_all:
+        with open(f"{paths['path-to-data-dir']}germany/Weather_WL_ALL/Meta_ALL.csv", newline="") as mf_all:   # All without 90 points 
             meta_reader_all = csv.DictReader(mf_all)
             for row in meta_reader_all:
                 plot_to_weather_all[int(row["Plot no"])] = row["Weather_file_no"]
