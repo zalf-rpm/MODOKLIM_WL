@@ -550,16 +550,16 @@ def run_producer(server=None, port=None):
 
                 env_template["params"]["siteParameters"]["SoilProfileParameters"] = soil_profile
 
-                if plot_no and plot_no >= 91:
-                    env_template["pathToClimateCSV"] = [
-                        paths["monica-path-to-climate-dir"] +
-                        f"/suren_WL/New_Weatherfile/{weather_base}.csv"
-                    ]
-                else:
-                    env_template["pathToClimateCSV"] = [
-                        paths["monica-path-to-climate-dir"] +
-                        f"/suren_WL/daily_mean_RES1_C181R0.csv/{weather_base}.csv"
-                    ]
+                # if plot_no and plot_no >= 91:
+                env_template["pathToClimateCSV"] = [
+                    paths["monica-path-to-climate-dir"] +
+                    f"/suren_WL/New_Weatherfile/{weather_base}.csv"
+                ]
+                # else:
+                #     env_template["pathToClimateCSV"] = [
+                #         paths["monica-path-to-climate-dir"] +
+                #         f"/suren_WL/daily_mean_RES1_C181R0.csv/{weather_base}.csv"
+                #     ]
 
                 env_template["customId"] = {
                     "setup_id": setup_id,
