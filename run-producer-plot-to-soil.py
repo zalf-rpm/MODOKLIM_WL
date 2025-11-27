@@ -1,3 +1,53 @@
+Author Name, Date	Discussion 	Conclusion	Paper name 
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 #!/usr/bin/python
 # -*- coding: UTF-8
 
@@ -106,7 +156,6 @@ DEBUG_ROWS = 10
 DEBUG_WRITE_FOLDER = "./debug_out"
 DEBUG_WRITE_CLIMATE = False
 
-
 ## Add an argument in the run_producer function and make a loop with changing of the value of the additional parameter (sensitivity analysis)
 ## Make a list of the parameter values first
 
@@ -179,7 +228,6 @@ def run_producer(server=None, port=None):
     soil_crs_to_x_transformers[csv_soils_crs] = Transformer.from_crs(soil_crs, csv_soils_crs, always_xy=True)
 
     plots = {}
-    overlay = {}
     if config["use_csv_soils"]:
         with open(f"{paths['path-to-data-dir']}/germany/Final_Hermes_Soil.csv") as file:
             dialect = csv.Sniffer().sniff(file.read(), delimiters=';,\t')
@@ -221,19 +269,19 @@ def run_producer(server=None, port=None):
 
         # Read Meta to build a mapping from Plot No (Field_Profile_number) to Weather_file_no
         plot_to_weather = {}
-        with open(f"{paths['path-to-data-dir']}germany/Weather_WL/Meta.csv", newline="") as mf:     #90 points
+        with open(f"{paths['path-to-data-dir']}germany/Weather_WL/Meta.csv", newline="") as mf:
             meta_reader = csv.DictReader(mf)
             for row in meta_reader:
-                plot_to_weather[int(row["Plot no"])] = row["Weather_file_no"]      #90 points
+                plot_to_weather[int(row["Plot no"])] = row["Weather_file_no"]
 
         plot_to_weather_all = {}
-        with open(f"{paths['path-to-data-dir']}germany/New_weatherfile/New_Meta.csv", newline="") as mf_all:   # All points new , previously used without 90points 'Meta_ALL'
+        with open(f"{paths['path-to-data-dir']}germany/Weather_WL_ALL/Meta_ALL.csv", newline="") as mf_all:
             meta_reader_all = csv.DictReader(mf_all)
             for row in meta_reader_all:
-                plot_to_weather_all[int(row["Plot no"])] = row["Weather_file_no"]    # All points new , previously used without 90points
+                plot_to_weather_all[int(row["Plot no"])] = row["Weather_file_no"]
 
         overlay = {} 
-        with open(f"{paths['path-to-data-dir']}/germany/dem_soil_ALL.csv") as of:   #dem_without_.csv used as main its without 90 points, dem_soil_ALL.csv is for all
+        with open(f"{paths['path-to-data-dir']}/germany/dem_soil_ALL.csv") as of:   #dem_without_.csv used as main its without 90 points
             dialect = csv.Sniffer().sniff(of.read(), delimiters=';,\t')
             of.seek(0)
             reader = csv.DictReader(of, dialect=dialect)
@@ -553,7 +601,7 @@ def run_producer(server=None, port=None):
                 if plot_no and plot_no >= 91:
                     env_template["pathToClimateCSV"] = [
                         paths["monica-path-to-climate-dir"] +
-                        f"/suren_WL/New_Weatherfile/{weather_base}.csv"
+                        f"/suren_WL/Weather_ALL/{weather_base}.csv"
                     ]
                 else:
                     env_template["pathToClimateCSV"] = [
@@ -599,6 +647,6 @@ def run_producer(server=None, port=None):
     except Exception:
         raise
 
-
 if __name__ == "__main__":
     run_producer()
+
