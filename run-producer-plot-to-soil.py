@@ -227,10 +227,10 @@ def run_producer(server=None, port=None):
                 plot_to_weather[int(row["Plot no"])] = row["Weather_file_no"]      #90 points
 
         plot_to_weather_all = {}
-        with open(f"{paths['path-to-data-dir']}germany/Weather_WL_ALL/New_Meta.csv", newline="") as mf_all:   # All points new
+        with open(f"{paths['path-to-data-dir']}germany/New_weatherfile/New_Meta.csv", newline="") as mf_all:   # All points new , previously used without 90points 'Meta_ALL'
             meta_reader_all = csv.DictReader(mf_all)
             for row in meta_reader_all:
-                plot_to_weather_all[int(row["Plot no"])] = row["Weather_file_no"]    # All point new
+                plot_to_weather_all[int(row["Plot no"])] = row["Weather_file_no"]    # All points new , previously used without 90points
 
         overlay = {} 
         with open(f"{paths['path-to-data-dir']}/germany/dem_soil_ALL.csv") as of:   #dem_without_.csv used as main its without 90 points, dem_soil_ALL.csv is for all
