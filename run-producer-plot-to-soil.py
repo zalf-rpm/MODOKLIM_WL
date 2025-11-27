@@ -179,6 +179,7 @@ def run_producer(server=None, port=None):
     soil_crs_to_x_transformers[csv_soils_crs] = Transformer.from_crs(soil_crs, csv_soils_crs, always_xy=True)
 
     plots = {}
+    overlay = {}
     if config["use_csv_soils"]:
         with open(f"{paths['path-to-data-dir']}/germany/Final_Hermes_Soil.csv") as file:
             dialect = csv.Sniffer().sniff(file.read(), delimiters=';,\t')
