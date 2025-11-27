@@ -127,7 +127,7 @@ def run_producer(server=None, port=None):
         "site.json": "site_WL.json",
         "setups-file": "sim_setups_SG.csv",
         "run-setups": "[1]",
-        "use_csv_soils": False,
+        "use_csv_soils": True,
     }
 
     common.update_config(config, sys.argv, print_config=True, allow_new_keys=False)
@@ -550,7 +550,7 @@ def run_producer(server=None, port=None):
 
                 env_template["params"]["siteParameters"]["SoilProfileParameters"] = soil_profile
 
-                if plot_no and plot_no >= 1:
+                if plot_no and plot_no >= 91:
                     env_template["pathToClimateCSV"] = [
                         paths["monica-path-to-climate-dir"] +
                         f"/suren_WL/New_Weatherfile/{weather_base}.csv"
@@ -558,7 +558,7 @@ def run_producer(server=None, port=None):
                 else:
                     env_template["pathToClimateCSV"] = [
                         paths["monica-path-to-climate-dir"] +
-                        f"/suren_WL/New_Weatherfile/{weather_base}.csv"
+                        f"/suren_WL/daily_mean_RES1_C181R0.csv/{weather_base}.csv"
                     ]
 
                 env_template["customId"] = {
