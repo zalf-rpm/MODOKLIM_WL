@@ -225,7 +225,7 @@ def run_producer(server=None, port=None):
                 plot_to_weather[int(row["Plot no"])] = row["Weather_file_no"]
 
         plot_to_weather_all = {}
-        with open(f"{paths['path-to-data-dir']}germany/Weather_WL_ALL/Meta_ALL.csv", newline="") as mf_all:
+        with open(f"{paths['path-to-data-dir']}germany/New_weatherfile/New_Meta.csv", newline="") as mf_all:
             meta_reader_all = csv.DictReader(mf_all)
             for row in meta_reader_all:
                 plot_to_weather_all[int(row["Plot no"])] = row["Weather_file_no"]
@@ -551,7 +551,7 @@ def run_producer(server=None, port=None):
                 if plot_no and plot_no >= 91:
                     env_template["pathToClimateCSV"] = [
                         paths["monica-path-to-climate-dir"] +
-                        f"/suren_WL/Weather_ALL/{weather_base}.csv"
+                        f"/suren_WL/New_weatherfile/{weather_base}.csv"
                     ]
                 else:
                     env_template["pathToClimateCSV"] = [
