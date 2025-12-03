@@ -258,11 +258,11 @@
 		"=": ["include-from-file", "general/crop.json"],
 		"__enable_vernalisation_factor_fix__": true,
 		"TimeUnderAnoxiaThreshold": [
-20,
-20,
-20,
-20,
-20,
-20]
+15,
+18,
+18,
+18,
+18,
+18]
 	}
 }
