@@ -492,7 +492,7 @@ def run_producer(server=None, port=None):
                         "env_id": sent_env_count,
                         "nodata": True,
                     }
-                    #socket.send_json(env_template)
+                    socket.send_json(env_template)
                     sent_env_count += 1
                     continue
 
@@ -509,7 +509,7 @@ def run_producer(server=None, port=None):
                         "env_id": sent_env_count,
                         "nodata": True,
                     }
-                    #socket.send_json(env_template)
+                    socket.send_json(env_template)
                     sent_env_count += 1
                     continue
 
