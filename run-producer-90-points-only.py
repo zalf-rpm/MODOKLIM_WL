@@ -64,7 +64,7 @@ PATHS = {
 # DEM only (no soil ASC)
 DATA_GRID_HEIGHT = "germany/Hermes-dem-wr_5_25832_etrs89-utm32n.asc"
 
-FINAL_SOIL_CSV = "germany/Final_Hermes_Soil.csv"
+FINAL_SOIL_CSV = "germany/Final_Hermes_Soil_25832.csv"
 META_WEATHER_CSV = "germany/Weather_WL/Meta.csv"  # mapping Plot no -> Weather_file_no
 
 # -------------------------------------------------------------------
@@ -114,7 +114,7 @@ def run_producer(server=None, port=None):
     dem_crs = CRS.from_epsg(dem_epsg_code)
 
     # CSV coords are in EPSG:25833
-    csv_soils_crs = CRS.from_epsg(25833)
+    csv_soils_crs = CRS.from_epsg(25832)
     csv_to_dem = Transformer.from_crs(csv_soils_crs, dem_crs, always_xy=True)
 
     # ---------------- LOAD 90 SOIL POINTS ----------------
@@ -129,7 +129,7 @@ def run_producer(server=None, port=None):
 
         for row in reader:
             plot_no = int(row["id"])
-            pr = float(row["X"])   # EPSG:25833
+            pr = float(row["X"])   
             ph = float(row["Y"])
 
             profile = [
