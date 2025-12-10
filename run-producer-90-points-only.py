@@ -118,20 +118,26 @@ def run_producer(server=None, port=None):
     csv_to_dem = Transformer.from_crs(csv_soils_crs, dem_crs, always_xy=True)
 
     # ---------------- LOAD 90 SOIL POINTS ----------------
+# ---------------- LOAD 90 SOIL POINTS ----------------
     plots = {}
     soil_csv_path = os.path.join(paths["path-to-data-dir"], FINAL_SOIL_CSV)
-    with open(soil_csv_path) as f:
-        # Detect delimiter if needed
-        sample = f.read(2048)
-        f.seek(0)
-        dialect = csv.Sniffer().sniff(f.read(), delimiters=';,\t')
-        reader = csv.DictReader(f, dialect=dialect)
+
+    with open(soil_csv_path, newline="") as f:
+        # FORCE comma delimiter (Sniffer was breaking!)
+        reader = csv.DictReader(f, delimiter=",")
 
         for row in reader:
-            plot_no = int(row["id"])
-            pr = float(row["X"])   
-            ph = float(row["Y"])
+            # Skip blank lines
+            if row["id"] is None or row["id"].strip() == "":
+                continue
 
+            plot_no = int(row["id"])
+
+            # Coordinates already reprojected to EPSG:25832
+            pr = float(row["X"])  # X coordinate
+            ph = float(row["Y"])  # Y coordinate
+
+            # Build soil profile (same as before)
             profile = [
                 {
                     "Thickness": [0.3, "m"],
@@ -162,6 +168,7 @@ def run_producer(server=None, port=None):
             plots[plot_no] = {"pr": pr, "ph": ph, "profile": profile}
 
     print(f"Loaded {len(plots)} soil points from {FINAL_SOIL_CSV}")
+
 
     # ---------------- WEATHER MAPPING ----------------
     plot_to_weather = {}
