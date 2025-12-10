@@ -100,7 +100,7 @@ def run_producer(server=None, port=None):
         # Detect delimiter if needed
         sample = f.read(2048)
         f.seek(0)
-        dialect = csv.Sniffer().sniff(sample, delimiters=';,\t')
+        dialect = csv.Sniffer().sniff(f.read(), delimiters=';,\t')
         reader = csv.DictReader(f, dialect=dialect)
 
         for row in reader:
