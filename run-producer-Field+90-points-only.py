@@ -85,7 +85,7 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 DATA_GRID_HEIGHT = "germany/Hermes-dem-wr_5_25832_etrs89-utm32n.asc"
 DATA_GRID_SLOPE = "germany/Hermes-slope-wr_5_25832_etrs89-utm32n.asc"
 DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
-DATA_GRID_SOIL = "germany/Herm-buek-wr_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/Hermes-buek-wr_100_25832_etrs89-utm32n.asc"
 DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
 DATA_GRID_CROPS = "germany/Hermes-crop-wr_100_25832_etrs89-utm32n.asc"
 
@@ -492,7 +492,7 @@ def run_producer(server=None, port=None):
                         "env_id": sent_env_count,
                         "nodata": True,
                     }
-                    #socket.send_json(env_template)
+                    socket.send_json(env_template)
                     sent_env_count += 1
                     continue
 
@@ -509,7 +509,7 @@ def run_producer(server=None, port=None):
                         "env_id": sent_env_count,
                         "nodata": True,
                     }
-                    #socket.send_json(env_template)
+                    socket.send_json(env_template)
                     sent_env_count += 1
                     continue
 
@@ -707,4 +707,5 @@ def run_producer(server=None, port=None):
 
 if __name__ == "__main__":
     run_producer()
+
 
