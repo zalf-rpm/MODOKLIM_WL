@@ -23,18 +23,42 @@ from zalfmas_common import rect_ascii_grid_management as ragm
 # PATH CONFIG
 # -------------------------------------------------------------------
 PATHS = {
+    # adjust the local path to your environment
     "re-local-remote": {
+        # "include-file-base-path": "/home/berg/GitHub/monica-parameters/", # path to monica-parameters
         "path-to-climate-dir": "data/",
+        # mounted path to archive or hard drive with climate data
         "monica-path-to-climate-dir": "/monica_data/climate-data/",
-        "path-to-data-dir": "./data/",
+        # mounted path to archive accessable by monica executable
+        "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
+        "path-debug-write-folder": "./debug-out/",
+    },
+    "mbm-local-remote": {
+        # "include-file-base-path": "/home/berg/GitHub/monica-parameters/", # path to monica-parameters
+        "path-to-climate-dir": "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/common/data/climate/",
+        # mounted path to archive or hard drive with climate data
+        "monica-path-to-climate-dir": "/monica_data/climate-data/",
+        # mounted path to archive accessable by monica executable
+        "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
+        "path-debug-write-folder": "./debug-out/",
+    },
+    "mbm-local-local": {
+        # "include-file-base-path": "/home/berg/GitHub/monica-parameters/", # path to monica-parameters
+        "path-to-climate-dir": "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/common/data/climate/",
+        # mounted path to archive or hard drive with climate data
+        "monica-path-to-climate-dir": "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/common/data/climate/",
+        # mounted path to archive accessable by monica executable
+        "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
         "path-debug-write-folder": "./debug-out/",
     },
     "remoteProducer-remoteMonica": {
-        "path-to-climate-dir": "/data/",
+        # "include-file-base-path": "/monica-parameters/", # path to monica-parameters
+        "path-to-climate-dir": "/data/",  # mounted path to archive or hard drive with climate data
         "monica-path-to-climate-dir": "/monica_data/climate-data/",
-        "path-to-data-dir": "./data/",
+        # mounted path to archive accessable by monica executable
+        "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
         "path-debug-write-folder": "/out/debug-out/",
-    },
+    }
 }
 
 # DEM only (no soil ASC)
