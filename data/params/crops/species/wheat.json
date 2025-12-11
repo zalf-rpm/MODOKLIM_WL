@@ -36,7 +36,7 @@
     0,
     0
   ],
-  "InitialRootingDepth":0.1,
+  "InitialRootingDepth":0.05,
   "LimitingTemperatureHeatStress":40,
   "LuxuryNCoeff":1.3,
   "MaxCropDiameter":0.005,
@@ -64,10 +64,10 @@
   ],
   "PartBiologicalNFixation":0,
   "PlantDensity": 220,
-  "RootDistributionParam":0.002787,
+  "RootDistributionParam":0.0015,
   "RootFormFactor":3,
   "RootGrowthLag":0,
-  "RootPenetrationRate":0.0009,
+  "RootPenetrationRate":0.0005,
   "SamplingDepth":0.9,
   
   "SpecificRootLength":280,
