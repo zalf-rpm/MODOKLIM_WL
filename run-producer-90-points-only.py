@@ -240,7 +240,18 @@ def run_producer(server=None, port=None):
             # DEM-based WL stress rule
             # --------------------------------------------
             LOWER_WL_FACTOR = 1.30   # 30% stronger WL stress
-            DEM_THRESHOLD = np.percentile(dem_grid[dem_grid != dem_metadata["NODATA_value"]], 20)
+            nodata_key = None
+            for k in dem_metadata:
+                if "nodata" in k.lower():
+                    nodata_key = k
+                    break
+
+            if nodata_key is None:
+                raise KeyError("No NODATA field found in DEM header!")
+
+            nodata = dem_metadata[nodata_key]
+            DEM_THRESHOLD = np.percentile(dem_grid[dem_grid != nodata], 20)
+
 
             # Check if this plot is low-lying
             is_low_dem = height_nn < DEM_THRESHOLD
