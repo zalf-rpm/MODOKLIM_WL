@@ -17,12 +17,12 @@
   ],
   "CarboxylationPathway":1,
   "CriticalOxygenContent":[  
-    0.08,
-    0.14,
-    0.09,
-    0.35,
-    0.08,
-    0.35
+    0.45,
+    0.45,
+    0.45,
+    0.45,
+    0.45,
+    0.45
   ],
   "CuttingDelayDays":0,
   "DefaultRadiationUseEfficiency":0.5,
