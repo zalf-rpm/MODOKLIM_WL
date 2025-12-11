@@ -236,6 +236,32 @@ def run_producer(server=None, port=None):
             # set site parameters
             env["params"]["siteParameters"]["HeightNN"] = height_nn
             env["params"]["siteParameters"]["SoilProfileParameters"] = pdata["profile"]
+            # --------------------------------------------
+            # DEM-based WL stress rule
+            # --------------------------------------------
+            LOWER_WL_FACTOR = 1.30   # 30% stronger WL stress
+            DEM_THRESHOLD = np.percentile(dem_grid[dem_grid != dem_metadata["NODATA_value"]], 20)
+
+            # Check if this plot is low-lying
+            is_low_dem = height_nn < DEM_THRESHOLD
+
+            # Copy crop params to modify COC
+            crop_params = env["params"]["cropParameters"]
+
+            if is_low_dem:
+                print(f"WL stress applied to plot {plot_no} (DEM={height_nn:.2f})")
+
+                # Increase COC → more WL stress
+                crop_params["CriticalOxygenContent"] = [
+                    x * LOWER_WL_FACTOR for x in crop_params["CriticalOxygenContent"]
+                ]
+
+                # Optional: reduce root penetration depth
+                crop_params["RootPenetrationRate"] *= 0.7
+
+            else:
+                print(f"No WL stress for plot {plot_no} (DEM={height_nn:.2f})")
+
 
             # weather file for this plot
             weather_file = plot_to_weather.get(plot_no)
