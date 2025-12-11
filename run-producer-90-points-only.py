@@ -114,7 +114,7 @@ def run_producer(server=None, port=None):
     dem_crs = CRS.from_epsg(dem_epsg_code)
 
     # CSV coords are in EPSG:25833
-    csv_soils_crs = CRS.from_epsg(25832)
+    csv_soils_crs = CRS.from_epsg(25833)
     csv_to_dem = Transformer.from_crs(csv_soils_crs, dem_crs, always_xy=True)
 
     # ---------------- LOAD 90 SOIL POINTS ----------------
