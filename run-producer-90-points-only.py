@@ -141,7 +141,7 @@ def run_producer(server=None, port=None):
             profile = [
                 {
                     "Thickness": [0.3, "m"],
-                    "SoilBulkDensity": [1500, "kg/m3"],
+                    "SoilBulkDensity": [1800, "kg/m3"],
                     "SoilOrganicCarbon": [float(row["Corg_0"]), "%"],
                     "Clay": [float(row["Clay_0"]) / 100.0, "m3/m3"],
                     "Sand": [float(row["Sand_0"]) / 100.0, "m3/m3"],
@@ -149,7 +149,7 @@ def run_producer(server=None, port=None):
                 },
                 {
                     "Thickness": [0.3, "m"],
-                    "SoilBulkDensity": [1500, "kg/m3"],
+                    "SoilBulkDensity": [1800, "kg/m3"],
                     "SoilOrganicCarbon": [float(row["Corg_30"]), "%"],
                     "Clay": [float(row["Clay_30"]) / 100.0, "m3/m3"],
                     "Sand": [float(row["Sand_30"]) / 100.0, "m3/m3"],
