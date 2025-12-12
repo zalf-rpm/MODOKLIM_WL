@@ -54,7 +54,7 @@
 				["Mois|SWC_2", 2],
 				["Mois|SWC_3", 3],
 				["Mois|SWC_4", 4],
-				["Mois|SWC1_4",[1,4], "SUM"],
+				["Mois|SWC1_4",[1,4, "SUM"]],
 				"TimeUnderAnoxia",
 				"OxRed|OxygenDeficit"
 			],
