@@ -50,7 +50,10 @@
 				["Sat|Sat_4", 4],
 				["Sat|Sat1-4", [1, 4, "SUM"]],
 				["RootDep"],
-				["Mois|SWC", [1, 1]],
+				["Mois|SWC_1", 1],
+				["Mois|SWC_2", 2],
+				["Mois|SWC_3", 3],
+				["Mois|SWC_4", 4],
 				"TimeUnderAnoxia",
 				"OxRed|OxygenDeficit"
 			],
