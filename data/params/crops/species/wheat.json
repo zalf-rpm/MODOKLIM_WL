@@ -16,13 +16,7 @@
     9
   ],
   "CarboxylationPathway":1,
-  "CriticalOxygenContent":[
-  0.1,
-  0.24,
-  0.22, 
-  0.15, 
-  0.09, 
-  0.09],
+  "CriticalOxygenContent":[0.10, 0.16, 0.22, 0.18, 0.09, 0.09],
   "CuttingDelayDays":0,
   "DefaultRadiationUseEfficiency":0.5,
   "DevelopmentAccelerationByNitrogenStress":1,
