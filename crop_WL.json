@@ -257,6 +257,6 @@
 	"CropParameters": {
 		"=": ["include-from-file", "general/crop.json"],
 		"__enable_vernalisation_factor_fix__": true,
-		"TimeUnderAnoxiaThreshold": [15, 12, 4, 3, 3, 5]
+		"TimeUnderAnoxiaThreshold": [1, 1, 1, 1, 1, 1]
 	}
 }
