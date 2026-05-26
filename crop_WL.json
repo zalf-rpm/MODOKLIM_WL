@@ -65,7 +65,7 @@
 					"type": "NDemandFertilization",
 					"days": 120,
 					"after": "Sowing",
-					"N-demand": [80.0, "kg"],
+					"N-demand": [40.0, "kg"],
 					"depth": [0.9, "m"],
 					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
 				},
@@ -73,7 +73,7 @@
 					"type": "NDemandFertilization",
 					"days": 150,
 					"after": "Sowing",
-					"N-demand": [40.0, "kg"],
+					"N-demand": [10.0, "kg"],
 					"depth": [0.9, "m"],
 					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
 				},
@@ -81,7 +81,7 @@
 					"type": "AutomaticHarvest", 
 					"latest-date": "0001-09-05",
 					"min-%-asw": 0,
-					"max-%-asw": 99.0,
+					"max-%-asw": 85.0,
 					"max-3d-precip-sum": 2,
 					"max-curr-day-precip": 0.1,
 					"harvest-time": "maturity"
