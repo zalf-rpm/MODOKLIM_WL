@@ -91,7 +91,7 @@
   "LT50cultivar":-24,
   "LatestHarvestDoy":-1,
   "LowTemperatureExposure":0.654,
-  "MaxAssimilationRate":30,
+  "MaxAssimilationRate":35,
   "MaxCropHeight":[  
     0.83,
     "m"
@@ -121,13 +121,13 @@
       "organId":2,
       "type":"YieldComponent",
       "yieldDryMatter":0.86,
-      "yieldPercentage":0.65
+      "yieldPercentage":0.85
     },
     {  
       "organId":3,
       "type":"YieldComponent",
       "yieldDryMatter":0.86,
-      "yieldPercentage":0.65
+      "yieldPercentage":0.9
     }
   ],
   "OrganSenescenceRate":[  
