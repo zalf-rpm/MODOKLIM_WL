@@ -121,13 +121,13 @@
       "organId":2,
       "type":"YieldComponent",
       "yieldDryMatter":0.86,
-      "yieldPercentage":0.85
+      "yieldPercentage":0.75
     },
     {  
       "organId":3,
       "type":"YieldComponent",
       "yieldDryMatter":0.86,
-      "yieldPercentage":0.9
+      "yieldPercentage":0.85
     }
   ],
   "OrganSenescenceRate":[  
