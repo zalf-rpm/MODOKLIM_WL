@@ -59,7 +59,7 @@
   "PlantDensity": 220,
   "RootDistributionParam":0.001,
   "RootFormFactor":3,
-  "RootGrowthLag":-100,
+  "RootGrowthLag":-10,
   "RootPenetrationRate":0.0003,
   "SamplingDepth":0.9,
   
